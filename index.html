@@ -19,14 +19,7 @@
       
         var reader = new FileReader();
         reader.onload = function() {
-          ISOBoxer.create(reader.result, function(err, parsedFile) {
-            if (err) {
-              alert (err);
-              return;
-            }
-            window.parsedFile = parsedFile;
-            console.log(parsedFile);
-          });
+          window.parsedFile = ISOBoxer.create(reader.result);
         }
         reader.readAsArrayBuffer(file);
       }
