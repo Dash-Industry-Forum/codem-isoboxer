@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <!-- <link href="" media="all" rel="stylesheet" /> -->
+  <script type="text/javascript" src="index.js"></script>
+
+  <title>IsoBoxer</title>
+</head>
+
+<body>
+  <input type="file" id="fileInput" />
+  
+  <script type="text/javascript">
+    function handleFileSelect(evt) {
+      if (evt.target.files.length) {
+        var file = evt.target.files[0];
+      
+        var reader = new FileReader();
+        reader.onload = function() {
+          ISOBoxer.create(reader.result, function(err, parsedFile) {
+            if (err) {
+              alert (err);
+              return;
+            }
+            window.parsedFile = parsedFile;
+            console.log(parsedFile);
+          });
+        }
+        reader.readAsArrayBuffer(file);
+      }
+    }
+    document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
+  </script>
+</body>
+
+</html>
