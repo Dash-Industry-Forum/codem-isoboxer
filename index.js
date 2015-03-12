@@ -181,6 +181,7 @@
   }
   ISOFile.prototype.parse = function() {
     this.cursor.offset = 0;
+    this.boxes = [];
     while (this.cursor.offset < this.raw.byteLength) {
       this.boxes.push(ISOBox.parse(this.raw, this.cursor));
     }
