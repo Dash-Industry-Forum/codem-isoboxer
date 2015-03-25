@@ -4,7 +4,7 @@
 
 ## Description
 
-Codem-isoboxer is a small browser-based MPEG-4 (ISOBMFF) parser. Currently a limited set of ISOBMFF boxes is supported:
+Codem-isoboxer is a small browser-based MPEG-4 (ISOBMFF) parser. Currently a limited set of ISOBMFF boxes is supported (alphabetically):
 
 * free/skip
 * ftyp
@@ -33,6 +33,10 @@ Then, you can parse a file by calling the `create` function:
     var parsedFile = ISOBoxer.create(arrayBuffer);
 
 The `arrayBuffer` can for example be obtained by issuing an XHR request, or by using the `FileReader` API to read a local file.
+
+Codem-isoboxer makes no assumptions on the validity of the given file. It also does minimal handling of the data types and provides
+mostly a raw interface. Some frequently used attributes are parsed to easier-to-use types, such as the major brand and list of compatible brands
+in the `ftyp` box.
 
 ## Development
 
