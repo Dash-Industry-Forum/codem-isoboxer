@@ -53,6 +53,16 @@ ISOBox.prototype._readString = function(length) {
   return str;    
 }
 
+ISOBox.prototype._readTerminatedString = function() {
+  var str = '';
+  while (true) {
+    var char = this._readUint(8);
+    if (char == 0) break;
+    str += String.fromCharCode(char);
+  }
+  return str;
+}
+
 ISOBox.prototype._readTemplate = function(size) {
   var pre = this._readUint(size / 2);
   var post = this._readUint(size / 2);
@@ -88,6 +98,18 @@ ISOBox.prototype._parseFullBox = function() {
 }
 
 ISOBox.prototype._boxParsers = {};
+
+// DASH-IF Ad Insertion in DASH v0.9 - 5.10.3.3 Event Message Box
+ISOBox.prototype._boxParsers['emsg'] = function() {
+  this._parseFullBox();
+  this.scheme_id_uri           = this._readTerminatedString();
+  this.value                   = this._readTerminatedString();
+  this.timescale               = this._readUint(32);
+  this.presentation_time_delta = this._readUint(32);
+  this.event_duration          = this._readUint(32);
+  this.id                      = this._readUint(32);
+  this.message_data            = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
+}
 
 // ISO/IEC 14496-12:2012 - 8.1.2 Free Space Box
 ISOBox.prototype._boxParsers['free'] = ISOBox.prototype._boxParsers['skip'] = function() {
