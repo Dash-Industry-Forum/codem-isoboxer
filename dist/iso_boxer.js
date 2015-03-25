@@ -116,8 +116,8 @@ ISOBox.prototype._boxParsers['free'] = ISOBox.prototype._boxParsers['skip'] = fu
   this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
 }
 
-// ISO/IEC 14496-12:2012 - 4.3 File Type Box
-ISOBox.prototype._boxParsers['ftyp'] = function() {
+// ISO/IEC 14496-12:2012 - 4.3 File Type Box / 8.16.2 Segment Type Box
+ISOBox.prototype._boxParsers['ftyp'] = ISOBox.prototype._boxParsers['styp'] = function() {
   this.major_brand = this._readString(4);
   this.minor_versions = this._readUint(32);
   this.compatible_brands = [];
