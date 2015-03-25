@@ -60,7 +60,7 @@ You can use `grunt-contrib-watch` to watch for changes to the source and automat
 
 ## Demo
 
-Open `test/index.html` in your browser. Use the file picker to select a local MPEG-4 file and parse it. Results will be in the `window.parsedFile` variable. Inspect it from your browser's console.
+Open `test/index.html` in your browser. Use the file picker to select a local MPEG-4 file to parse it. Results will be in the `window.parsedFile` variable. Inspect it from your browser's console. Some test files are included in `test/fixtures`.
 
 ## License
 
