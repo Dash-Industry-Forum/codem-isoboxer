@@ -6,6 +6,7 @@
 
 Codem-isoboxer is a small browser-based MPEG-4 (ISOBMFF) parser. Currently a limited set of ISOBMFF boxes is supported (alphabetically):
 
+### ISO/IEC 14496-12:2012 (ISOBMFF)
 * free/skip
 * ftyp
 * mdat
@@ -13,6 +14,10 @@ Codem-isoboxer is a small browser-based MPEG-4 (ISOBMFF) parser. Currently a lim
 * mvhd
 * tkhd
 * trak
+
+### ISO/IEC 23009-1:2014 (MPEG-DASH)
+
+* emsg
 
 Support for more boxes can easily be added by adding additional box parsers in `src/iso_box.js`.
 

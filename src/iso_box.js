@@ -94,7 +94,7 @@ ISOBox.prototype._parseFullBox = function() {
 
 ISOBox.prototype._boxParsers = {};
 
-// DASH-IF Ad Insertion in DASH v0.9 - 5.10.3.3 Event Message Box
+// ISO/IEC 23009-1:2014 - 5.10.3.3 Event Message Box
 ISOBox.prototype._boxParsers['emsg'] = function() {
   this._parseFullBox();
   this.scheme_id_uri           = this._readTerminatedString();
