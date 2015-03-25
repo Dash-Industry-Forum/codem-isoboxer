@@ -12,6 +12,8 @@ Currently a limited set of ISOBMFF boxes is supported (alphabetically):
 * free / skip
 * ftyp / styp
 * mdat
+* mdia
+* mdhd
 * moov / moof
 * mvhd / mfhd
 * sidx
