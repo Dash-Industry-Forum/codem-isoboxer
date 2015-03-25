@@ -1,0 +1,33 @@
+{
+  "name": "codem-isoboxer",
+  "version": "0.0.1",
+  "description": "Browser-based MPEG-4 (ISOBMFF) file/box parsing.",
+  "keywords": [
+    "mp4", "mpeg-4", "mpeg4", "isobmff", "parser"
+  ],
+  "homepage": "https://github.com/madebyhiro/codem-isoboxer",
+  "main": "dist/iso_boxer.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/madebyhiro/codem-isoboxer"
+  },
+  "bugs": {
+    "url": "https://github.com/madebyhiro/codem-isoboxer/issues"
+  },
+  "author": {
+    "name": "Sjoerd Tieleman",
+    "email": "sjoerd@madebyhiro.com",
+    "url": "http://madebyhiro.com/"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt"
+    }
+  ],
+  "devDependencies": {
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-uglify": "^0.8.0",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}
