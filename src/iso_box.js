@@ -1,6 +1,5 @@
 var ISOBox = function() {
   this._cursor = new ISOBoxer.Cursor();
-  this._cursor.name = 'ISOBox';
 }
 
 ISOBox.parse = function(parent) {
@@ -87,13 +86,11 @@ ISOBox.prototype._boxParsers = {};
 
 // ISO/IEC 14496-12:2012 - 8.1.2 Free Space Box
 ISOBox.prototype._boxParsers['free'] = ISOBox.prototype._boxParsers['skip'] = function() {
-  this._cursor.name += " free/skip";
   this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
 }
 
 // ISO/IEC 14496-12:2012 - 4.3 File Type Box
 ISOBox.prototype._boxParsers['ftyp'] = function() {
-  this._cursor.name += " ftyp";
   this.major_brand = this._readString(4);
   this.minor_versions = this._readUint(32);
   this.compatible_brands = [];
@@ -105,13 +102,11 @@ ISOBox.prototype._boxParsers['ftyp'] = function() {
 
 // ISO/IEC 14496-12:2012 - 8.1.1 Media Data Box
 ISOBox.prototype._boxParsers['mdat'] = function() {
-  this._cursor.name += " mdat";
   this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
 }
 
 // ISO/IEC 14496-12:2012 - 8.2.1 Movie Box
 ISOBox.prototype._boxParsers['moov'] = function() {
-  this._cursor.name += " moov";
   this.boxes = [];
   while (this._cursor.offset < this._raw.byteLength) {
     this.boxes.push(ISOBox.parse(this));
@@ -120,7 +115,6 @@ ISOBox.prototype._boxParsers['moov'] = function() {
 
 // ISO/IEC 14496-12:2012 - 8.2.2 Movie Header Box
 ISOBox.prototype._boxParsers['mvhd'] = function() {
-  this._cursor.name += " mvhd";
   this._parseFullBox();
   
   if (this.version == 1) {
@@ -155,7 +149,6 @@ ISOBox.prototype._boxParsers['mvhd'] = function() {
 
 // ISO/IEC 14496-12:2012 - 8.3.2 Track Header Box
 ISOBox.prototype._boxParsers['tkhd'] = function() {
-  this._cursor.name += " tkhd";
   this._parseFullBox();
   
   if (this.version == 1) {
@@ -190,7 +183,6 @@ ISOBox.prototype._boxParsers['tkhd'] = function() {
 
 // ISO/IEC 14496-12:2012 - 8.3.1 Track Box
 ISOBox.prototype._boxParsers['trak'] = function() {
-  this._cursor.name += " trak";
   this.boxes = [];
   while (this._cursor.offset < this._raw.byteLength) {
     this.boxes.push(ISOBox.parse(this));

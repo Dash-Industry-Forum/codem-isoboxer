@@ -1,7 +1,6 @@
 var ISOFile = function(arrayBuffer) {
   this._raw = new DataView(arrayBuffer);
   this._cursor = new ISOBoxer.Cursor();
-  this._cursor.name = 'ISOFile';
   this.boxes = [];
 }
 
