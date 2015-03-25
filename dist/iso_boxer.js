@@ -108,6 +108,12 @@ ISOBox.prototype._boxParsers['ftyp'] = function() {
   }
 }
 
+// ISO/IEC 14496-12:2012 - 8.1.1 Media Data Box
+ISOBox.prototype._boxParsers['mdat'] = function() {
+  this._cursor.name += " mdat";
+  this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
+}
+
 // ISO/IEC 14496-12:2012 - 8.2.1 Movie Box
 ISOBox.prototype._boxParsers['moov'] = function() {
   this._cursor.name += " moov";

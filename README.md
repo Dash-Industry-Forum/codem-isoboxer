@@ -8,6 +8,7 @@ Codem-isoboxer is a small browser-based MPEG-4 (ISOBMFF) parser. Currently a lim
 
 * free/skip
 * ftyp
+* mdat
 * moov
 * mvhd
 * tkhd
@@ -40,7 +41,7 @@ in the `ftyp` box.
 
 ## Development
 
-Check out the source from Github. Make changes to the files in `/src`. We use `grunt` to build the distribution files.
+Check out the source from Github. Make changes to the files in `/src`. We use `grunt` to build the distribution files. If you add a box parser be sure to include a comment that points toward the relevant section in the specs.
 
 ### Building
 
