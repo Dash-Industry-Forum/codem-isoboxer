@@ -127,8 +127,14 @@ ISOBox.prototype._boxParsers['mdat'] = function() {
   this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
 }
 
-// ISO/IEC 14496-12:2012 - 8.2.1 Movie Box
-ISOBox.prototype._boxParsers['moov'] = function() {
+// ISO/IEC 14496-12:2012 - 8.8.5 Movie Fragment Header Box
+ISOBox.prototype._boxParsers['mfhd'] = function() {
+  this._parseFullBox();
+  this.sequence_number = this._readUint(32);
+}
+
+// ISO/IEC 14496-12:2012 - 8.2.1 Movie Box / 8.8.4 Movie Fragment Box
+ISOBox.prototype._boxParsers['moov'] = ISOBox.prototype._boxParsers['moof'] = function() {
   this.boxes = [];
   while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
     this.boxes.push(ISOBox.parse(this));
