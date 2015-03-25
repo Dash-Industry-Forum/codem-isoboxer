@@ -94,6 +94,21 @@ ISOBox.prototype._parseFullBox = function() {
 
 ISOBox.prototype._boxParsers = {};
 
+// Simple container boxes
+// ISO/IEC 14496-12:2012 - 8.2.1 Movie Box
+// ISO/IEC 14496-12:2012 - 8.3.1 Track Box
+// ISO/IEC 14496-12:2012 - 8.4.1 Media Box
+// ISO/IEC 14496-12:2012 - 8.8.4 Movie Fragment Box
+ISOBox.prototype._boxParsers['moov'] = 
+ISOBox.prototype._boxParsers['trak'] =
+ISOBox.prototype._boxParsers['mdia'] =
+ISOBox.prototype._boxParsers['moof'] = function() {
+  this.boxes = [];
+  while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
+    this.boxes.push(ISOBox.parse(this));
+  }  
+}
+
 // ISO/IEC 23009-1:2014 - 5.10.3.3 Event Message Box
 ISOBox.prototype._boxParsers['emsg'] = function() {
   this._parseFullBox();
@@ -127,18 +142,34 @@ ISOBox.prototype._boxParsers['mdat'] = function() {
   this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
 }
 
+// ISO/IEC 14496-12:2012 - 8.4.2 Media Header Box
+ISOBox.prototype._boxParsers['mdhd'] = function() {
+  this._parseFullBox();
+  if (this.version == 1) {
+    this.creation_time = this._readUint(64);
+    this.modification_time = this._readUint(64);
+    this.timescale = this._readUint(32);
+    this.duration = this._readUint(64);
+  } else {
+    this.creation_time = this._readUint(32);
+    this.modification_time = this._readUint(32);
+    this.timescale = this._readUint(32);
+    this.duration = this._readUint(32);
+  }
+  var language = this._readUint(16);
+  this.pad = (language >> 15);
+  this.language = String.fromCharCode(
+    ((language >> 10) & 0x1F) + 0x60,
+    ((language >> 5) & 0x1F) + 0x60,
+    (language & 0x1F) + 0x60
+  );
+  this.pre_defined = this._readUint(16);
+}
+
 // ISO/IEC 14496-12:2012 - 8.8.5 Movie Fragment Header Box
 ISOBox.prototype._boxParsers['mfhd'] = function() {
   this._parseFullBox();
   this.sequence_number = this._readUint(32);
-}
-
-// ISO/IEC 14496-12:2012 - 8.2.1 Movie Box / 8.8.4 Movie Fragment Box
-ISOBox.prototype._boxParsers['moov'] = ISOBox.prototype._boxParsers['moof'] = function() {
-  this.boxes = [];
-  while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
-    this.boxes.push(ISOBox.parse(this));
-  }
 }
 
 // ISO/IEC 14496-12:2012 - 8.2.2 Movie Header Box
@@ -236,12 +267,4 @@ ISOBox.prototype._boxParsers['tkhd'] = function() {
   }
   this.width = this._readUint(32);
   this.height = this._readUint(32);
-}
-
-// ISO/IEC 14496-12:2012 - 8.3.1 Track Box
-ISOBox.prototype._boxParsers['trak'] = function() {
-  this.boxes = [];
-  while (this._cursor.offset < this._raw.byteLength) {
-    this.boxes.push(ISOBox.parse(this));
-  }
 }
