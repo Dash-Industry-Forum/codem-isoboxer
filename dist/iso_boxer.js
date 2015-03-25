@@ -90,11 +90,13 @@ ISOBox.prototype._parseFullBox = function() {
 
 ISOBox.prototype._boxParsers = {};
 
+// ISO/IEC 14496-12:2012 - 8.1.2 Free Space Box
 ISOBox.prototype._boxParsers['free'] = ISOBox.prototype._boxParsers['skip'] = function() {
   this._cursor.name += " free/skip";
   this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
 }
 
+// ISO/IEC 14496-12:2012 - 4.3 File Type Box
 ISOBox.prototype._boxParsers['ftyp'] = function() {
   this._cursor.name += " ftyp";
   this.major_brand = this._readString(4);
@@ -106,6 +108,7 @@ ISOBox.prototype._boxParsers['ftyp'] = function() {
   }
 }
 
+// ISO/IEC 14496-12:2012 - 8.2.1 Movie Box
 ISOBox.prototype._boxParsers['moov'] = function() {
   this._cursor.name += " moov";
   this.boxes = [];
@@ -114,6 +117,7 @@ ISOBox.prototype._boxParsers['moov'] = function() {
   }
 }
 
+// ISO/IEC 14496-12:2012 - 8.2.2 Movie Header Box
 ISOBox.prototype._boxParsers['mvhd'] = function() {
   this._cursor.name += " mvhd";
   this._parseFullBox();
@@ -148,6 +152,7 @@ ISOBox.prototype._boxParsers['mvhd'] = function() {
   this.next_track_ID = this._readUint(32);
 }
 
+// ISO/IEC 14496-12:2012 - 8.3.2 Track Header Box
 ISOBox.prototype._boxParsers['tkhd'] = function() {
   this._cursor.name += " tkhd";
   this._parseFullBox();
@@ -182,6 +187,7 @@ ISOBox.prototype._boxParsers['tkhd'] = function() {
   this.height = this._readUint(32);
 }
 
+// ISO/IEC 14496-12:2012 - 8.3.1 Track Box
 ISOBox.prototype._boxParsers['trak'] = function() {
   this._cursor.name += " trak";
   this.boxes = [];
