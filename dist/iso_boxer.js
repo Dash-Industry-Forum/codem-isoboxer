@@ -113,7 +113,7 @@ ISOBox.prototype._boxParsers['mdat'] = function() {
 // ISO/IEC 14496-12:2012 - 8.2.1 Movie Box
 ISOBox.prototype._boxParsers['moov'] = function() {
   this.boxes = [];
-  while (this._cursor.offset < this._raw.byteLength) {
+  while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
     this.boxes.push(ISOBox.parse(this));
   }
 }
