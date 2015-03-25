@@ -14,6 +14,7 @@ Currently a limited set of ISOBMFF boxes is supported (alphabetically):
 * mdat
 * moov
 * mvhd
+* sidx
 * tkhd
 * trak
 
