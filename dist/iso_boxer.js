@@ -8,12 +8,13 @@ var ISOBox = function() {
   this._cursor.name = 'ISOBox';
 }
 
-ISOBox.parse = function(raw, cursor) {
+ISOBox.parse = function(parent) {
   var newBox = new ISOBox();
-  newBox._offset = cursor.offset;
-  newBox._raw = raw;
-  newBox._parseBox()
-  cursor.offset = newBox._raw.byteOffset + newBox._raw.byteLength;
+  newBox._offset = parent._cursor.offset;
+  newBox._raw = parent._raw;
+  newBox._parseBox();
+  newBox._parent = parent;
+  parent._cursor.offset = newBox._raw.byteOffset + newBox._raw.byteLength;
   return newBox;
 }
 
@@ -91,10 +92,7 @@ ISOBox.prototype._boxParsers = {};
 
 ISOBox.prototype._boxParsers['free'] = ISOBox.prototype._boxParsers['skip'] = function() {
   this._cursor.name += " free/skip";
-  this.data = [];
-  while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
-    this.data.push(this._readUint(8));
-  }
+  this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
 }
 
 ISOBox.prototype._boxParsers['ftyp'] = function() {
@@ -112,7 +110,7 @@ ISOBox.prototype._boxParsers['moov'] = function() {
   this._cursor.name += " moov";
   this.boxes = [];
   while (this._cursor.offset < this._raw.byteLength) {
-    this.boxes.push(ISOBox.parse(this._raw, this._cursor));
+    this.boxes.push(ISOBox.parse(this));
   }
 }
 
@@ -188,7 +186,7 @@ ISOBox.prototype._boxParsers['trak'] = function() {
   this._cursor.name += " trak";
   this.boxes = [];
   while (this._cursor.offset < this._raw.byteLength) {
-    this.boxes.push(ISOBox.parse(this._raw, this._cursor));
+    this.boxes.push(ISOBox.parse(this));
   }
 }
 ;
@@ -208,7 +206,7 @@ ISOFile.prototype.parse = function() {
   this._cursor.offset = 0;
   this.boxes = [];
   while (this._cursor.offset < this._raw.byteLength) {
-    this.boxes.push(ISOBox.parse(this._raw, this._cursor));
+    this.boxes.push(ISOBox.parse(this));
   }
   return this;
 }
