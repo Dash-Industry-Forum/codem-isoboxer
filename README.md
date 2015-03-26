@@ -17,8 +17,10 @@ Currently a limited set of ISOBMFF boxes is supported (alphabetically):
 * moov / moof
 * mvhd / mfhd
 * sidx
-* tkhd
-* trak
+* tfhd / tkhd
+* tfdt
+* traf / trak
+* trun
 
 ### ISO/IEC 23009-1:2014 (MPEG-DASH)
 
