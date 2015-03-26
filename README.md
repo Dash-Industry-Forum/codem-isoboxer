@@ -51,6 +51,21 @@ Codem-isoboxer makes no assumptions on the validity of the given file and/or seg
 types and provides mostly a raw interface. Some frequently used attributes are parsed to easier-to-use types, such as the major
 brand and list of compatible brands in the `ftyp` box.
 
+### NodeJS
+
+Does it work in NodeJS? Well, it's mostly meant to be run in a web browser, but since Node supports most features it shouldn't be
+a problem. You can install it using NPM:
+
+    npm install codem-isoboxer
+
+Then use it in your code (NodeJS v0.10.36 tested, 0.12.x should work as well):
+
+    var ISOBoxer = require('codem-isoboxer');
+    var arrayBuffer = new Uint8Array(fs.readFileSync('my_test_file.mp4')).buffer;
+    var parsedFile = ISOBoxer.create(arrayBuffer);
+
+Et voila. It does not support any of the fancy stream stuff from Node.
+
 ## Development
 
 Check out the source from Github. Make changes to the files in `/src`. We use `grunt` to build the distribution files. If you add a box parser be sure to include a comment that points toward the relevant section in the specs. And if at all possible add a (small!) file to `test/fixtures` to provide an example.
