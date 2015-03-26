@@ -4,14 +4,14 @@
 
 ## Description
 
-Codem-isoboxer is a small browser-based MPEG-4 (ISOBMFF) parser. It is meant to be small, fast and efficient. A typical use-case would be inclusion in a new player framework (for emerging standards such as MPEG-DASH which rely on ISOBMFF for most situations) or to extract metadata from MPEG-4 files:
+`codem-isoboxer` is a small browser-based MPEG-4 (ISOBMFF) parser. It is meant to be small, fast and efficient. A typical use-case would be inclusion in a new player framework (for emerging standards such as MPEG-DASH which rely on ISOBMFF for most situations) or to extract metadata from MPEG-4 files:
 
 * Parsing `emsg` boxes for in-band events;
 * Parsing `mdat` boxes for extracting subtitles;
 * Validating ISOBMFF segments before playing them back;
 * [etc.]
 
-Currently a limited set of ISOBMFF boxes is supported (alphabetically):
+Currently a limited set of ISOBMFF boxes is supported:
 
 ### ISO/IEC 14496-12:2012 (ISOBMFF)
 * free / skip
@@ -31,7 +31,7 @@ Currently a limited set of ISOBMFF boxes is supported (alphabetically):
 
 * emsg
 
-Support for more boxes can easily be added by adding additional box parsers in `src/iso_box.js`. Several utility functions are included to help with reading the various ISOBMFF data types from the raw file.
+Support for more boxes can easily be added by adding additional box parsers in `src/iso_box.js`. Some utility functions are included to help with reading the various ISOBMFF data types from the raw file.
 
 ## Requirements
 
@@ -42,7 +42,7 @@ A modern web browser with support for:
 
 ## Usage
 
-Include one of the files in the `dist` folder (regular or uglified) in your web page/application:
+Include one of the files in the `dist` folder (regular or minified) in your web page/application:
 
     <script type="text/javascript" src="iso_boxer.min.js"></script>
 
@@ -50,9 +50,10 @@ Then, you can parse a file by calling the `create` function:
 
     var parsedFile = ISOBoxer.create(arrayBuffer);
 
-The `arrayBuffer` can for example be obtained by issuing an XHR request, or by using the `FileReader` API to read a local file.
+The `arrayBuffer` can be obtained for example by issuing an `XMLHttpRequest` with `responsetype` set to `arrayBuffer`, or by using
+the `FileReader` API to read a local file.
 
-Codem-isoboxer makes no assumptions on the validity of the given file and/or segment. It also does minimal handling of the data
+`codem-isoboxer` makes no assumptions on the validity of the given file and/or segment. It also does minimal handling of the data
 types and provides mostly a raw interface. Some frequently used attributes are parsed to easier-to-use types, such as the major
 brand and list of compatible brands in the `ftyp` box.
 
@@ -71,24 +72,30 @@ An additional utility method is included to convert DataViews into strings (comp
     var mdat       = parsedFile.fetch('mdat');     // Get the first 'mdat' box
     var text       = ISOBoxer.Utils.dataViewToString(mdat.data); // Convert the data into a string (e.g. captions)
 
+For traversing the box structure you can use the `_parent` property. It contains exactly what you expect: the parent of the
+current box. The opposite is the `boxes` property (only available on container boxes such as `moov`), which gives you its children.
+
 ### NodeJS
 
-Does it work in NodeJS? Well, it's mostly meant to be run in a web browser, but since Node supports most features it shouldn't be
+Does it work in NodeJS? Well, it's really meant to be run in a web browser, but since Node supports most features it shouldn't be
 a problem. You can install it using NPM:
 
     npm install codem-isoboxer
 
 Then use it in your code (NodeJS v0.10.36 tested, 0.12.x should work as well):
 
-    var ISOBoxer = require('codem-isoboxer');
+    var ISOBoxer    = require('codem-isoboxer'),
+        fs          = require('fs');
     var arrayBuffer = new Uint8Array(fs.readFileSync('my_test_file.mp4')).buffer;
-    var parsedFile = ISOBoxer.create(arrayBuffer);
+    var parsedFile  = ISOBoxer.create(arrayBuffer);
 
-Et voila. It does not support any of the fancy stream stuff from Node.
+Et voila. It does not support any of the fancy stream stuff from Node. Also, the Node console has some issues with printing objects
+that contain buffers/dataviews/circular references. It might not look pretty in the console, but it works.
 
 ## Development
 
 Check out the source from Github. Make changes to the files in `/src`. We use `grunt` to build the distribution files. If you add a box parser be sure to include a comment that points toward the relevant section in the specs. And if at all possible add a (small!) file to `test/fixtures` to provide an example.
+The test directory is not included in the published package on npmjs.org because of the included MPEG-4 files.
 
 ### Building
 
@@ -102,8 +109,8 @@ You can use `grunt-contrib-watch` to watch for changes to the source and automat
 
 ## Demo
 
-Open `test/index.html` in your browser. Use the file picker to select a local MPEG-4 file to parse it. Results will be in the `window.parsedFile` variable. Inspect it from your browser's console. Some test files are included in `test/fixtures`.
+Open `test/index.html` in your browser. Use the file picker to select a local MPEG-4 file to parse it. Results will be in the `window.parsedFile` variable. Inspect it from your browser's console. Some test files are included in `test/fixtures` (not included in the package published on npmjs.org).
 
 ## License
 
-Codem-isoboxer is released under the MIT license, see `LICENSE.txt`.
+`codem-isoboxer` is released under the MIT license, see `LICENSE.txt`.
