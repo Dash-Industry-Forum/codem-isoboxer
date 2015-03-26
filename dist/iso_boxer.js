@@ -341,7 +341,19 @@ ISOBoxer.create = function(arrayBuffer) {
   return new ISOFile(arrayBuffer).parse();
 };
 
-if (typeof exports !== 'undefined') exports.create = ISOBoxer.create;;
+ISOBoxer.Utils = {};
+ISOBoxer.Utils.dataViewToString = function(dataView) {
+  var str = '';
+  for (var i=0; i<dataView.byteLength; i++) {
+    str += String.fromCharCode(dataView.getUint8(i));
+  }
+  return str;  
+};
+
+if (typeof exports !== 'undefined') {
+  exports.create = ISOBoxer.create;
+  exports.Utils  = ISOBoxer.Utils;
+};
 var ISOFile = function(arrayBuffer) {
   this._raw = new DataView(arrayBuffer);
   this._cursor = new ISOBoxer.Cursor();

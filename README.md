@@ -65,6 +65,12 @@ structure yourself:
 
 Traversal of the box structure is always depth first.
 
+An additional utility method is included to convert DataViews into strings (completely naïve, no fancy encoding support):
+
+    var parsedFile = ISOBoxer.create(arrayBuffer); // Parse the file
+    var mdat       = parsedFile.fetch('mdat');     // Get the first 'mdat' box
+    var text       = ISOBoxer.Utils.dataViewToString(mdat.data); // Convert the data into a string (e.g. captions)
+
 ### NodeJS
 
 Does it work in NodeJS? Well, it's mostly meant to be run in a web browser, but since Node supports most features it shouldn't be
