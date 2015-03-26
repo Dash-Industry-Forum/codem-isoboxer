@@ -4,7 +4,12 @@
 
 ## Description
 
-Codem-isoboxer is a small browser-based MPEG-4 (ISOBMFF) parser. It is meant to be small, fast and efficient. A typical use-case would be inclusion in a new player framework (for emerging standards such as MPEG-DASH which rely on ISOBMFF for most situations) or to extract metadata from MPEG-4 files.
+Codem-isoboxer is a small browser-based MPEG-4 (ISOBMFF) parser. It is meant to be small, fast and efficient. A typical use-case would be inclusion in a new player framework (for emerging standards such as MPEG-DASH which rely on ISOBMFF for most situations) or to extract metadata from MPEG-4 files:
+
+* Parsing `emsg` boxes for in-band events;
+* Parsing `mdat` boxes for extracting subtitles;
+* Validating ISOBMFF segments before playing them;
+* [etc.]
 
 Currently a limited set of ISOBMFF boxes is supported (alphabetically):
 
