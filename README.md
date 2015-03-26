@@ -56,6 +56,15 @@ Codem-isoboxer makes no assumptions on the validity of the given file and/or seg
 types and provides mostly a raw interface. Some frequently used attributes are parsed to easier-to-use types, such as the major
 brand and list of compatible brands in the `ftyp` box.
 
+Another way to use the software is to only retrieve the boxes you are interested in. This way you don't have to traverse the box
+structure yourself:
+
+    var parsedFile = ISOBoxer.create(arrayBuffer);  // Parse the file
+    var ftyp       = parsedFile.fetch('ftyp');      // Fetch the first box with the specified type (`ftyp`)
+    var mdats      = parsedFile.fetchAll('mdat');   // Fetch all the boxes with the specified type (`mdat`)
+
+Traversal of the box structure is always depth first.
+
 ### NodeJS
 
 Does it work in NodeJS? Well, it's mostly meant to be run in a web browser, but since Node supports most features it shouldn't be

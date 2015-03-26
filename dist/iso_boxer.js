@@ -348,6 +348,17 @@ var ISOFile = function(arrayBuffer) {
   this.boxes = [];
 }
 
+ISOFile.prototype.fetch = function(type) {
+  var result = this.fetchAll(type);
+  return (result.length ? result[0] : null);
+}
+
+ISOFile.prototype.fetchAll = function(type) {
+  var result = [];
+  ISOFile._sweep.call(this, type, result);
+  return result;
+}
+
 ISOFile.prototype.parse = function() {
   this._cursor.offset = 0;
   this.boxes = [];
@@ -355,4 +366,11 @@ ISOFile.prototype.parse = function() {
     this.boxes.push(ISOBox.parse(this));
   }
   return this;
+}
+
+ISOFile._sweep = function(type, result) {
+  if (this.type && this.type == type) result.push(this);
+  for (var box in this.boxes) {
+    ISOFile._sweep.call(this.boxes[box], type, result);
+  }    
 }
