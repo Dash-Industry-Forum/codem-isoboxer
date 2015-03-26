@@ -8,7 +8,7 @@ Codem-isoboxer is a small browser-based MPEG-4 (ISOBMFF) parser. It is meant to 
 
 * Parsing `emsg` boxes for in-band events;
 * Parsing `mdat` boxes for extracting subtitles;
-* Validating ISOBMFF segments before playing them;
+* Validating ISOBMFF segments before playing them back;
 * [etc.]
 
 Currently a limited set of ISOBMFF boxes is supported (alphabetically):
