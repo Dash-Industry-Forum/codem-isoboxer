@@ -339,7 +339,9 @@ var ISOBoxer = ISOBoxer || {};
 
 ISOBoxer.create = function(arrayBuffer) {
   return new ISOFile(arrayBuffer).parse();
-};;
+};
+
+if (typeof exports !== 'undefined') exports.create = ISOBoxer.create;;
 var ISOFile = function(arrayBuffer) {
   this._raw = new DataView(arrayBuffer);
   this._cursor = new ISOBoxer.Cursor();
