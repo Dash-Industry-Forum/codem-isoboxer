@@ -19,7 +19,7 @@
       
         var reader = new FileReader();
         reader.onload = function() {
-          window.parsedFile = ISOBoxer.create(reader.result);
+          window.parsedFile = ISOBoxer.parseBuffer(reader.result);
           document.body.innerHTML += "<br>Parsing complete. Please see the window.parsedFile variable in your browser console."
         }
         reader.readAsArrayBuffer(file);

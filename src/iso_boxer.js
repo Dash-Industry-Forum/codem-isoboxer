@@ -1,6 +1,6 @@
 var ISOBoxer = ISOBoxer || {};
 
-ISOBoxer.create = function(arrayBuffer) {
+ISOBoxer.parseBuffer = function(arrayBuffer) {
   return new ISOFile(arrayBuffer).parse();
 };
 
@@ -14,6 +14,6 @@ ISOBoxer.Utils.dataViewToString = function(dataView) {
 };
 
 if (typeof exports !== 'undefined') {
-  exports.create = ISOBoxer.create;
-  exports.Utils  = ISOBoxer.Utils;
+  exports.parseBuffer = ISOBoxer.parseBuffer;
+  exports.Utils       = ISOBoxer.Utils;
 }

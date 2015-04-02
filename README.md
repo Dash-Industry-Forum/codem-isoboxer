@@ -46,9 +46,9 @@ Include one of the files in the `dist` folder (regular or minified) in your web 
 
     <script type="text/javascript" src="iso_boxer.min.js"></script>
 
-Then, you can parse a file by calling the `create` function:
+Then, you can parse a file by calling the `parseBuffer` function:
 
-    var parsedFile = ISOBoxer.create(arrayBuffer);
+    var parsedFile = ISOBoxer.parseBuffer(arrayBuffer);
 
 The `arrayBuffer` can be obtained for example by issuing an `XMLHttpRequest` with `responsetype` set to `arrayBuffer`, or by using
 the `FileReader` API to read a local file.
@@ -60,16 +60,16 @@ brand and list of compatible brands in the `ftyp` box.
 Another way to use the software is to only retrieve the boxes you are interested in. This way you don't have to traverse the box
 structure yourself:
 
-    var parsedFile = ISOBoxer.create(arrayBuffer);  // Parse the file
-    var ftyp       = parsedFile.fetch('ftyp');      // Fetch the first box with the specified type (`ftyp`)
-    var mdats      = parsedFile.fetchAll('mdat');   // Fetch all the boxes with the specified type (`mdat`)
+    var parsedFile = ISOBoxer.parseBuffer(arrayBuffer); // Parse the file
+    var ftyp       = parsedFile.fetch('ftyp');          // Fetch the first box with the specified type (`ftyp`)
+    var mdats      = parsedFile.fetchAll('mdat');       // Fetch all the boxes with the specified type (`mdat`)
 
 Traversal of the box structure is always depth first.
 
 An additional utility method is included to convert DataViews into strings (completely naïve, no fancy encoding support):
 
-    var parsedFile = ISOBoxer.create(arrayBuffer); // Parse the file
-    var mdat       = parsedFile.fetch('mdat');     // Get the first 'mdat' box
+    var parsedFile = ISOBoxer.parseBuffer(arrayBuffer); // Parse the file
+    var mdat       = parsedFile.fetch('mdat');          // Get the first 'mdat' box
     var text       = ISOBoxer.Utils.dataViewToString(mdat.data); // Convert the data into a string (e.g. captions)
 
 For traversing the box structure you can use the `_parent` property. It contains exactly what you expect: the parent of the
@@ -87,7 +87,7 @@ Then use it in your code (NodeJS v0.10.36 tested, 0.12.x should work as well):
     var ISOBoxer    = require('codem-isoboxer'),
         fs          = require('fs');
     var arrayBuffer = new Uint8Array(fs.readFileSync('my_test_file.mp4')).buffer;
-    var parsedFile  = ISOBoxer.create(arrayBuffer);
+    var parsedFile  = ISOBoxer.parseBuffer(arrayBuffer);
 
 Et voila. It does not support any of the fancy stream stuff from Node. Also, the Node console has some issues with printing objects
 that contain buffers/dataviews/circular references. It might not look pretty in the console, but it works.
