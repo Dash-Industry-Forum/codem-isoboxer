@@ -1,5 +1,4 @@
-var ISOBoxer = require('../../dist/iso_boxer.js'),
-    fs = require('fs');
+var ISOBoxer = require('../../dist/iso_boxer.js');
 
 describe('ISOBoxer', function() {
   it('should parse a buffer', function() {
