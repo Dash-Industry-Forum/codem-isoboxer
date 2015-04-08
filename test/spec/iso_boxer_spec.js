@@ -14,4 +14,10 @@ describe('ISOBoxer', function() {
     expect(box.minor_versions).toEqual(1);
     expect(box.compatible_brands).toEqual(['isom']);
   })
+  
+  it('should convert a simple dataView to a string', function() {
+    var arrayBuffer = new Uint8Array([0x74, 0x65, 0x73, 0x74, 0x20, 0x73, 0x74, 0x72, 0x69, 0x6e, 0x67]).buffer;
+    var dataView = new DataView(arrayBuffer);
+    expect(ISOBoxer.Utils.dataViewToString(dataView)).toEqual('test string')
+  })
 })
