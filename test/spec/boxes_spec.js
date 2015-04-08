@@ -30,6 +30,18 @@ describe('ftyp box', function() {
   })
 });
 
+describe('mdat box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/captions.mp4');
+    var box = parsedFile.boxes[2];
+
+    expect(box.type).toEqual('mdat');
+    expect(box.size).toEqual(21530);
+    expect(box.data.byteLength).toEqual(21522);
+  })
+  
+})
+
 describe('moov box', function() {
   it('should correctly parse the box', function() {
     var parsedFile  = loadParsedFixture('./test/fixtures/captions.mp4');
