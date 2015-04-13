@@ -107,6 +107,18 @@ You can use `grunt-contrib-watch` to watch for changes to the source and automat
 
     grunt watch
 
+### Tests
+
+Included is a small set of tests which check the code against a known set of ISOBMFF files. The tests use NodeJS with `jasmine-node`.
+Make sure you have the grunt watcher running, as it tests against the resulting build of the JavaScript files. Usage:
+
+    # npm install jasmine-node -g
+    # jasmine-node test/spec
+
+When adding new parsers please consider adding an ISOBMFF test file and a relevant test spec.
+
+Please note, for size concerns, tests are only included in the Github repository and not in the released packages on NPM.
+
 ## Demo
 
 Open `test/index.html` in your browser. Use the file picker to select a local MPEG-4 file to parse it. Results will be in the `window.parsedFile` variable. Inspect it from your browser's console. Some test files are included in `test/fixtures` (not included in the package published on npmjs.org).
