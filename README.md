@@ -39,6 +39,7 @@ A modern web browser with support for:
 
 * ArrayBuffer
 * DataView
+* TextDecoder (optional)
 
 ## Usage
 
@@ -66,13 +67,15 @@ structure yourself:
 
 Traversal of the box structure is always depth first.
 
-An additional utility method is included to convert DataViews into strings (completely naïve, no fancy encoding support):
+An additional utility method is included to convert DataViews into strings. This uses the `TextDecoder` interface is available,
+otherwise it falls back to a naïve implementation (bytes to character codes). If the `TextDecoder` interface is available you can
+supply an additional `encoding` parameter (defaults to `utf-8`) to the function.
 
     var parsedFile = ISOBoxer.parseBuffer(arrayBuffer); // Parse the file
     var mdat       = parsedFile.fetch('mdat');          // Get the first 'mdat' box
     var text       = ISOBoxer.Utils.dataViewToString(mdat.data); // Convert the data into a string (e.g. captions)
 
-For traversing the box structure you can use the `_parent` property. It contains exactly what you expect: the parent of the
+For traversing the box structure you can use the `_parent` property. It returns exactly what you expect: the parent of the
 current box. The opposite is the `boxes` property (only available on container boxes such as `moov`), which gives you its children.
 
 ### NodeJS
