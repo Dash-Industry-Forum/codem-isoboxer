@@ -113,34 +113,18 @@ ISOBox.prototype._parseFullBox = function() {
 
 ISOBox.prototype._boxParsers = {};
 
-// Simple container boxes
-// ISO/IEC 14496-12:2012 - 8.2.1 Movie Box
-ISOBox.prototype._boxParsers['moov'] =
-// ISO/IEC 14496-12:2012 - 8.3.1 Track Box
-ISOBox.prototype._boxParsers['trak'] =
-// ISO/IEC 14496-12:2012 - 8.3.3 Track Reference Box
-ISOBox.prototype._boxParsers['tref'] =
-// ISO/IEC 14496-12:2012 - 8.4.1 Media Box
-ISOBox.prototype._boxParsers['mdia'] =
-// ISO/IEC 14496-12:2012 - 8.4.4 Media Information Box
-ISOBox.prototype._boxParsers['minf'] =
-// ISO/IEC 14496-12:2012 - 8.5.1 Sample Table Box
-ISOBox.prototype._boxParsers['stbl'] =
-// ISO/IEC 14496-12:2012 - 8.6.5 Edit Box
-ISOBox.prototype._boxParsers['edts'] =
-// ISO/IEC 14496-12:2012 - 8.7.1 Data Information Box
-ISOBox.prototype._boxParsers['dinf'] =
-// ISO/IEC 14496-12:2012 - 8.8.1 Movie Extends Box
-ISOBox.prototype._boxParsers['mvex'] =
-// ISO/IEC 14496-12:2012 - 8.8.4 Movie Fragment Box
-ISOBox.prototype._boxParsers['moof'] =
-// ISO/IEC 14496-12:2012 - 8.8.6 Track Fragment Box
-ISOBox.prototype._boxParsers['traf'] = function() {
-  this.boxes = [];
-  while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
-    this.boxes.push(ISOBox.parse(this));
+// Simple container boxes, all from ISO/IEC 14496-12:2012
+[
+  'moov', 'trak', 'trak', 'tref', 'mdia', 'minf', 'stbl', 'edts', 'dinf',
+  'mvex', 'moof', 'traf', 'mfra', 'udta', 'meco', 'strk'
+].forEach(function(boxType) {
+  ISOBox.prototype._boxParsers[boxType] = function() {
+    this.boxes = [];
+    while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
+      this.boxes.push(ISOBox.parse(this));
+    }  
   }  
-}
+})
 
 // ISO/IEC 23009-1:2014 - 5.10.3.3 Event Message Box
 ISOBox.prototype._boxParsers['emsg'] = function() {
