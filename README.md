@@ -14,18 +14,28 @@
 Currently a limited set of ISOBMFF boxes is supported:
 
 ### ISO/IEC 14496-12:2012 (ISOBMFF)
+* dinf
+* edts
 * free / skip
 * ftyp / styp
 * mdat
 * mdia
 * mdhd
+* meco
+* mfra
+* minf
 * moov / moof
+* mvex
 * mvhd / mfhd
 * sidx
+* stbl
+* strk
 * tfhd / tkhd
 * tfdt
 * traf / trak
+* tref
 * trun
+* udta
 
 ### ISO/IEC 23009-1:2014 (MPEG-DASH)
 
