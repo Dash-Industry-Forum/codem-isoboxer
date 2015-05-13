@@ -31,6 +31,7 @@ describe('ISOBoxer', function() {
     it('should mark the incomplete box and root object as incomplete', function() {
       var parsedFile = loadParsedFixture('./test/fixtures/spliced_1500.m4v');
       expect(parsedFile._incomplete).toEqual(true);
+      expect(parsedFile.boxes.length).toEqual(5);
       expect(parsedFile.boxes[parsedFile.boxes.length - 1]._incomplete).toEqual(true);
     })
     
@@ -39,6 +40,20 @@ describe('ISOBoxer', function() {
       for (var i = 0; i < parsedFile.boxes.length - 1; i++) {
         expect(parsedFile.boxes[i]._incomplete).toEqual(undefined);        
       }
+    })
+    
+    it('should reject boxes that are cut in the header and set incomplete on the root', function() {
+      var parsedFile = loadParsedFixture('./test/fixtures/spliced_34.m4v');
+      expect(parsedFile._incomplete).toEqual(true);
+      expect(parsedFile.boxes.length).toEqual(1);
+    })
+    
+    it('should not parse boxes nested inside incomplete boxes', function() {
+      var parsedFile = loadParsedFixture('./test/fixtures/spliced_251.m4v');
+      expect(parsedFile._incomplete).toEqual(true);
+      expect(parsedFile.boxes.length).toEqual(2);
+      expect(parsedFile.boxes[1].boxes).toEqual(undefined);
+      expect(parsedFile.fetch('trak')).toEqual(undefined);
     })
   })
 })

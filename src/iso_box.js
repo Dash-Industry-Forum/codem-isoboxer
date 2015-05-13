@@ -86,6 +86,13 @@ ISOBox.prototype._readTemplate = function(size) {
 
 ISOBox.prototype._parseBox = function() {
   this._cursor.offset = this._offset;
+  
+  // return immediately if there are not enough bytes to read the header
+  if (this._offset + 8 > this._raw.buffer.byteLength) {
+    this._root._incomplete = true;
+    return;
+  }
+  
   this.size = this._readUint(32);
   this.type = this._readString(4);
 

@@ -19,7 +19,12 @@ ISOFile.prototype.parse = function() {
   this._cursor.offset = 0;
   this.boxes = [];
   while (this._cursor.offset < this._raw.byteLength) {
-    this.boxes.push(ISOBox.parse(this));
+    var box = ISOBox.parse(this);
+
+    // Box could not be parsed
+    if (typeof box.type === 'undefined') break;
+
+    this.boxes.push(box);
   }
   return this;
 }
