@@ -5,9 +5,10 @@ var ISOBox = function() {
 ISOBox.parse = function(parent) {
   var newBox = new ISOBox();
   newBox._offset = parent._cursor.offset;
+  newBox._root = (parent._root ? parent._root : parent);
   newBox._raw = parent._raw;
-  newBox._parseBox();
   newBox._parent = parent;
+  newBox._parseBox();
   parent._cursor.offset = newBox._raw.byteOffset + newBox._raw.byteLength;
   return newBox;
 }
