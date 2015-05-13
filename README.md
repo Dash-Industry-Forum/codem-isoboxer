@@ -41,7 +41,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 
 * emsg
 
-Support for more boxes can easily be added by adding additional box parsers in `src/iso_box.js`. Some utility functions are included to help with reading the various ISOBMFF data types from the raw file.
+Support for more boxes can easily be added by adding additional box parsers in `src/iso_box.js`. Some utility functions are included to help with reading the various ISOBMFF data types from the raw file. Also, see the [Box Support page on the Wiki](https://github.com/madebyhiro/codem-isoboxer/wiki/Box-support) for a full list.
 
 ## Requirements
 
@@ -60,6 +60,7 @@ Include one of the files in the `dist` folder (regular or minified) in your web 
 Then, you can parse a file by calling the `parseBuffer` function:
 
     var parsedFile = ISOBoxer.parseBuffer(arrayBuffer);
+    console.log(parsedFile.boxes);
 
 The `arrayBuffer` can be obtained for example by issuing an `XMLHttpRequest` with `responsetype` set to `arrayBuffer`, or by using
 the `FileReader` API to read a local file.
@@ -68,6 +69,9 @@ the `FileReader` API to read a local file.
 types and provides mostly a raw interface. Some frequently used attributes are parsed to easier-to-use types, such as the major
 brand and list of compatible brands in the `ftyp` box.
 
+For traversing the box structure you can use the `_parent` property. It returns exactly what you expect: the parent of the
+current box. The opposite is the `boxes` property (only available on container boxes such as `moov`), which gives you its children.
+
 Another way to use the software is to only retrieve the boxes you are interested in. This way you don't have to traverse the box
 structure yourself:
 
@@ -75,7 +79,7 @@ structure yourself:
     var ftyp       = parsedFile.fetch('ftyp');          // Fetch the first box with the specified type (`ftyp`)
     var mdats      = parsedFile.fetchAll('mdat');       // Fetch all the boxes with the specified type (`mdat`)
 
-Traversal of the box structure is always depth first.
+Traversal of the box structure is always depth first. Note that while you jump directly to a box using the fetch commands, the entire parsed structure is still available, so the `_parent` and `boxes` properties are still available.
 
 An additional utility method is included to convert DataViews into strings. This uses the `TextDecoder` interface is available,
 otherwise it falls back to a naïve implementation (bytes to character codes). If the `TextDecoder` interface is available you can
@@ -84,9 +88,6 @@ supply an additional `encoding` parameter (defaults to `utf-8`) to the function.
     var parsedFile = ISOBoxer.parseBuffer(arrayBuffer); // Parse the file
     var mdat       = parsedFile.fetch('mdat');          // Get the first 'mdat' box
     var text       = ISOBoxer.Utils.dataViewToString(mdat.data); // Convert the data into a string (e.g. captions)
-
-For traversing the box structure you can use the `_parent` property. It returns exactly what you expect: the parent of the
-current box. The opposite is the `boxes` property (only available on container boxes such as `moov`), which gives you its children.
 
 ### NodeJS
 
