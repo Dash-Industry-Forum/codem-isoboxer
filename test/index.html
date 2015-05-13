@@ -19,8 +19,10 @@
       
         var reader = new FileReader();
         reader.onload = function() {
+          var t0 = new Date().getTime();
           window.parsedFile = ISOBoxer.parseBuffer(reader.result);
-          document.body.innerHTML += "<br>Parsing complete. Please see the window.parsedFile variable in your browser console."
+          var t1 = new Date().getTime();
+          document.body.innerHTML += "<br>Parsing complete (" + (t1-t0) + "ms). Please see the window.parsedFile variable in your browser console."
         }
         reader.readAsArrayBuffer(file);
       }
