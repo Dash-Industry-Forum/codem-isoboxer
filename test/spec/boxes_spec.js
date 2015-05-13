@@ -52,3 +52,20 @@ describe('moov box', function() {
     expect(box.boxes.length).toEqual(2);
   })
 })
+
+describe('ssix box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/spliced_10000.m4v');
+    var box = parsedFile.boxes[4];
+    
+    expect(box.type).toEqual('ssix');
+    expect(box.size).toEqual(8124);
+    expect(box.subsegment_count).toEqual(25);
+    expect(box.subsegments.length).toEqual(25);
+    
+    // Test one of the subsegments
+    expect(box.subsegments[0].ranges_count).toEqual(70);
+    expect(box.subsegments[0].ranges[45].level).toEqual(2);
+    expect(box.subsegments[0].ranges[45].range_size).toEqual(7312);
+  })
+})
