@@ -1,6 +1,6 @@
 {
   "name": "codem-isoboxer",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Browser-based MPEG-4 (ISOBMFF) file/box parsing.",
   "keywords": [
     "mp4", "mpeg-4", "mpeg4", "isobmff", "parser"

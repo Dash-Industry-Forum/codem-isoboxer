@@ -28,6 +28,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 * mvex
 * mvhd / mfhd
 * sidx
+* ssix
 * stbl
 * strk
 * tfhd / tkhd
@@ -71,6 +72,7 @@ brand and list of compatible brands in the `ftyp` box.
 
 For traversing the box structure you can use the `_parent` property. It returns exactly what you expect: the parent of the
 current box. The opposite is the `boxes` property (only available on container boxes such as `moov`), which gives you its children.
+Every box also has a `_root` property which returns the top-level (file) container.
 
 Another way to use the software is to only retrieve the boxes you are interested in. This way you don't have to traverse the box
 structure yourself:
@@ -79,7 +81,7 @@ structure yourself:
     var ftyp       = parsedFile.fetch('ftyp');          // Fetch the first box with the specified type (`ftyp`)
     var mdats      = parsedFile.fetchAll('mdat');       // Fetch all the boxes with the specified type (`mdat`)
 
-Traversal of the box structure is always depth first. Note that while you jump directly to a box using the fetch commands, the entire parsed structure is still available, so the `_parent` and `boxes` properties are still available.
+Traversal of the box structure is always depth first. Note that while you jump directly to a box using the fetch commands, the entire parsed structure is still available, so the `_parent`, `_root` and `boxes` properties are still available.
 
 An additional utility method is included to convert DataViews into strings. This uses the `TextDecoder` interface is available,
 otherwise it falls back to a naïve implementation (bytes to character codes). If the `TextDecoder` interface is available you can
@@ -88,6 +90,10 @@ supply an additional `encoding` parameter (defaults to `utf-8`) to the function.
     var parsedFile = ISOBoxer.parseBuffer(arrayBuffer); // Parse the file
     var mdat       = parsedFile.fetch('mdat');          // Get the first 'mdat' box
     var text       = ISOBoxer.Utils.dataViewToString(mdat.data); // Convert the data into a string (e.g. captions)
+
+Basic support for incomplete buffers is also available. Boxes and containers that cannot be fully parsed (due to an empty buffer)
+will be marked with an `_incomplete` property. You can simply add new data to the `ArrayBuffer` when it becomes available and
+re-parse the buffer.
 
 ### NodeJS
 
