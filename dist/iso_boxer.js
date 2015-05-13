@@ -102,14 +102,24 @@ ISOBox.prototype._parseBox = function() {
     this._raw = new DataView(this._raw.buffer, this._offset, (this._raw.byteLength - this._cursor.offset));
     break;
   case 1:
-    this._raw = new DataView(this._raw.buffer, this._offset, this.largesize);
+    if (this._offset + this.size > this._raw.buffer.byteLength) {
+      this._incomplete = true;
+      this._root._incomplete = true;
+    } else {
+      this._raw = new DataView(this._raw.buffer, this._offset, this.largesize);      
+    }
     break;
   default:
-    this._raw = new DataView(this._raw.buffer, this._offset, this.size);
+    if (this._offset + this.size > this._raw.buffer.byteLength) {
+      this._incomplete = true;
+      this._root._incomplete = true;
+    } else {
+      this._raw = new DataView(this._raw.buffer, this._offset, this.size);      
+    }
   }
 
   // additional parsing
-  if (this._boxParsers[this.type]) this._boxParsers[this.type].call(this);    
+  if (!this._incomplete && this._boxParsers[this.type]) this._boxParsers[this.type].call(this);    
 }
 
 ISOBox.prototype._parseFullBox = function() {
