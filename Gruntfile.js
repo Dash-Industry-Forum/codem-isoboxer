@@ -1,9 +1,11 @@
 module.exports = function(grunt) {
-
+  var banner = '/*! <%= pkg.name %> v<%= pkg.version %> <%= pkg.licenses[0].url %> */\n';
+  
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
       options: {
+        banner: banner,
         separator: ';\n'
       },
       dist: {
@@ -13,8 +15,7 @@ module.exports = function(grunt) {
     },
     uglify: {
       options: {
-        // the banner is inserted at the top of the output
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+        banner: banner
       },
       dist: {
         files: {
