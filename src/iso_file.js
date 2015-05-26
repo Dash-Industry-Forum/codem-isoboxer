@@ -33,5 +33,5 @@ ISOFile._sweep = function(type, result) {
   if (this.type && this.type == type) result.push(this);
   for (var box in this.boxes) {
     ISOFile._sweep.call(this.boxes[box], type, result);
-  }    
+  }
 }
