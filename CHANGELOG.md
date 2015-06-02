@@ -1,3 +1,7 @@
+## codem-isoboxer 0.1.0 (2015/06/02) ##
+
+* Improved performance for `fetch` function
+
 ## codem-isoboxer 0.0.6 (2015/05/13) ##
 
 * Basic support for incomplete buffers (flagged with `_incomplete` property)

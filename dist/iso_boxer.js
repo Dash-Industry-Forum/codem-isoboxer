@@ -1,4 +1,4 @@
-/*! codem-isoboxer v0.0.6 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
+/*! codem-isoboxer v0.1.0 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
 var ISOBoxer = ISOBoxer || {};
 
 ISOBoxer.Cursor = function(initialOffset) {
