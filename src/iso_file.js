@@ -5,13 +5,13 @@ var ISOFile = function(arrayBuffer) {
 }
 
 ISOFile.prototype.fetch = function(type) {
-  var result = this.fetchAll(type);
+  var result = this.fetchAll(type, true);
   return (result.length ? result[0] : null);
 }
 
-ISOFile.prototype.fetchAll = function(type) {
+ISOFile.prototype.fetchAll = function(type, returnEarly) {
   var result = [];
-  ISOFile._sweep.call(this, type, result);
+  ISOFile._sweep.call(this, type, result, returnEarly);
   return result;
 }
 
@@ -29,9 +29,10 @@ ISOFile.prototype.parse = function() {
   return this;
 }
 
-ISOFile._sweep = function(type, result) {
+ISOFile._sweep = function(type, result, returnEarly) {
   if (this.type && this.type == type) result.push(this);
   for (var box in this.boxes) {
-    ISOFile._sweep.call(this.boxes[box], type, result);
+    if (result.length && returnEarly) return;
+    ISOFile._sweep.call(this.boxes[box], type, result, returnEarly);
   }
 }
