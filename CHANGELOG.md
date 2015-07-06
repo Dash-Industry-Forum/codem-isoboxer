@@ -1,3 +1,7 @@
+## codem-isoboxer 0.1.1 (2015/07/06) ##
+
+* Added support for `hdlr` box
+
 ## codem-isoboxer 0.1.0 (2015/06/02) ##
 
 * Improved performance for `fetch` function

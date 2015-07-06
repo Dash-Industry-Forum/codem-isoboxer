@@ -30,6 +30,21 @@ describe('ftyp box', function() {
   })
 });
 
+describe('hdlr box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/captions.mp4');
+    var box = parsedFile.fetch('hdlr');
+
+    expect(box.type).toEqual('hdlr');
+    expect(box.size).toEqual(68);
+    
+    expect(box.pre_defined).toEqual(0);
+    expect(box.handler_type).toEqual('subt');
+    expect(box.reserved).toEqual([0,0,0]);
+    expect(box.name).toEqual('*xml:ext=ttml@GPAC0.5.1-DEV-rev5545');
+  })  
+})
+
 describe('mdat box', function() {
   it('should correctly parse the box', function() {
     var parsedFile  = loadParsedFixture('./test/fixtures/captions.mp4');

@@ -172,6 +172,15 @@ ISOBox.prototype._boxParsers['ftyp'] = ISOBox.prototype._boxParsers['styp'] = fu
   }
 }
 
+// ISO/IEC 14496-12:2012 - 8.4.3 Handler Reference Box
+ISOBox.prototype._boxParsers['hdlr'] = function() {
+  this._parseFullBox();
+  this.pre_defined = this._readUint(32);
+  this.handler_type = this._readString(4);
+  this.reserved = [this._readUint(32), this._readUint(32), this._readUint(32)]
+  this.name = this._readTerminatedString()
+}
+
 // ISO/IEC 14496-12:2012 - 8.1.1 Media Data Box
 ISOBox.prototype._boxParsers['mdat'] = function() {
   this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
