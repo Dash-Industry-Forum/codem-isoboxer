@@ -1,8 +1,66 @@
 /*! codem-isoboxer v0.1.1 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
-var ISOBoxer = ISOBoxer || {};
+var ISOBoxer = {};
 
+ISOBoxer.parseBuffer = function(arrayBuffer) {
+  return new ISOFile(arrayBuffer).parse();
+};
+
+ISOBoxer.Utils = {};
+ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
+  if (typeof TextDecoder !== 'undefined') {
+    return new TextDecoder(encoding || 'utf-8').decode(dataView);
+  }
+  var str = '';
+  for (var i=0; i<dataView.byteLength; i++) {
+    str += String.fromCharCode(dataView.getUint8(i));
+  }    
+  return str;  
+};
+
+if (typeof exports !== 'undefined') {
+  exports.parseBuffer = ISOBoxer.parseBuffer;
+  exports.Utils       = ISOBoxer.Utils;
+};
 ISOBoxer.Cursor = function(initialOffset) {
   this.offset = (typeof initialOffset == 'undefined' ? 0 : initialOffset);
+};
+var ISOFile = function(arrayBuffer) {
+  this._raw = new DataView(arrayBuffer);
+  this._cursor = new ISOBoxer.Cursor();
+  this.boxes = [];
+}
+
+ISOFile.prototype.fetch = function(type) {
+  var result = this.fetchAll(type, true);
+  return (result.length ? result[0] : null);
+}
+
+ISOFile.prototype.fetchAll = function(type, returnEarly) {
+  var result = [];
+  ISOFile._sweep.call(this, type, result, returnEarly);
+  return result;
+}
+
+ISOFile.prototype.parse = function() {
+  this._cursor.offset = 0;
+  this.boxes = [];
+  while (this._cursor.offset < this._raw.byteLength) {
+    var box = ISOBox.parse(this);
+
+    // Box could not be parsed
+    if (typeof box.type === 'undefined') break;
+
+    this.boxes.push(box);
+  }
+  return this;
+}
+
+ISOFile._sweep = function(type, result, returnEarly) {
+  if (this.type && this.type == type) result.push(this);
+  for (var box in this.boxes) {
+    if (result.length && returnEarly) return;
+    ISOFile._sweep.call(this.boxes[box], type, result, returnEarly);
+  }
 };
 var ISOBox = function() {
   this._cursor = new ISOBoxer.Cursor();
@@ -135,8 +193,7 @@ ISOBox.prototype._parseFullBox = function() {
   this.flags = this._readUint(24);
 }
 
-ISOBox.prototype._boxParsers = {};
-
+ISOBox.prototype._boxParsers = {};;
 // Simple container boxes, all from ISO/IEC 14496-12:2012
 [
   'moov', 'trak', 'tref', 'mdia', 'minf', 'stbl', 'edts', 'dinf',
@@ -148,8 +205,7 @@ ISOBox.prototype._boxParsers = {};
       this.boxes.push(ISOBox.parse(this));
     }  
   }  
-})
-
+});
 // ISO/IEC 23009-1:2014 - 5.10.3.3 Event Message Box
 ISOBox.prototype._boxParsers['emsg'] = function() {
   this._parseFullBox();
@@ -160,13 +216,11 @@ ISOBox.prototype._boxParsers['emsg'] = function() {
   this.event_duration          = this._readUint(32);
   this.id                      = this._readUint(32);
   this.message_data            = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
-}
-
+};
 // ISO/IEC 14496-12:2012 - 8.1.2 Free Space Box
 ISOBox.prototype._boxParsers['free'] = ISOBox.prototype._boxParsers['skip'] = function() {
   this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
-}
-
+};
 // ISO/IEC 14496-12:2012 - 4.3 File Type Box / 8.16.2 Segment Type Box
 ISOBox.prototype._boxParsers['ftyp'] = ISOBox.prototype._boxParsers['styp'] = function() {
   this.major_brand = this._readString(4);
@@ -176,8 +230,7 @@ ISOBox.prototype._boxParsers['ftyp'] = ISOBox.prototype._boxParsers['styp'] = fu
   while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
     this.compatible_brands.push(this._readString(4));
   }
-}
-
+};
 // ISO/IEC 14496-12:2012 - 8.4.3 Handler Reference Box
 ISOBox.prototype._boxParsers['hdlr'] = function() {
   this._parseFullBox();
@@ -185,13 +238,11 @@ ISOBox.prototype._boxParsers['hdlr'] = function() {
   this.handler_type = this._readString(4);
   this.reserved = [this._readUint(32), this._readUint(32), this._readUint(32)]
   this.name = this._readTerminatedString()
-}
-
+};
 // ISO/IEC 14496-12:2012 - 8.1.1 Media Data Box
 ISOBox.prototype._boxParsers['mdat'] = function() {
   this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
-}
-
+};
 // ISO/IEC 14496-12:2012 - 8.4.2 Media Header Box
 ISOBox.prototype._boxParsers['mdhd'] = function() {
   this._parseFullBox();
@@ -214,14 +265,12 @@ ISOBox.prototype._boxParsers['mdhd'] = function() {
     (language & 0x1F) + 0x60
   );
   this.pre_defined = this._readUint(16);
-}
-
+};
 // ISO/IEC 14496-12:2012 - 8.8.5 Movie Fragment Header Box
 ISOBox.prototype._boxParsers['mfhd'] = function() {
   this._parseFullBox();
   this.sequence_number = this._readUint(32);
-}
-
+};
 // ISO/IEC 14496-12:2012 - 8.2.2 Movie Header Box
 ISOBox.prototype._boxParsers['mvhd'] = function() {
   this._parseFullBox();
@@ -251,8 +300,7 @@ ISOBox.prototype._boxParsers['mvhd'] = function() {
     this.pre_defined.push(this._readUint(32));
   }
   this.next_track_ID = this._readUint(32);
-}
-
+};
 // ISO/IEC 14496-12:2012 - 8.16.3 Segment Index Box
 ISOBox.prototype._boxParsers['sidx'] = function() {
   this._parseFullBox();
@@ -280,8 +328,7 @@ ISOBox.prototype._boxParsers['sidx'] = function() {
     ref.SAP_delta_time = sap & 0xFFFFFFF;
     this.references.push(ref);
   }
-}
-
+};
 // ISO/IEC 14496-12:2012 - 8.16.4 Subsegment Index Box
 ISOBox.prototype._boxParsers['ssix'] = function() {
   this._parseFullBox();
@@ -301,8 +348,26 @@ ISOBox.prototype._boxParsers['ssix'] = function() {
     }
     this.subsegments.push(subsegment);
   }
-}
-
+};
+// ISO/IEC 14496-12:2012 - 8.8.12 Track Fragmnent Decode Time
+ISOBox.prototype._boxParsers['tfdt'] = function() {
+  this._parseFullBox();
+  if (this.version == 1) {
+    this.baseMediaDecodeTime = this._readUint(64);
+  } else {
+    this.baseMediaDecodeTime = this._readUint(32);    
+  }
+};
+// ISO/IEC 14496-12:2012 - 8.8.7 Track Fragment Header Box
+ISOBox.prototype._boxParsers['tfhd'] = function() {
+  this._parseFullBox();
+  this.track_ID = this._readUint(32);
+  if (this.flags & 0x1) this.base_data_offset = this._readUint(64);
+  if (this.flags & 0x2) this.sample_description_offset = this._readUint(32);
+  if (this.flags & 0x8) this.default_sample_duration = this._readUint(32);
+  if (this.flags & 0x10) this.default_sample_size = this._readUint(32);
+  if (this.flags & 0x20) this.default_sample_flags = this._readUint(32);
+};
 // ISO/IEC 14496-12:2012 - 8.3.2 Track Header Box
 ISOBox.prototype._boxParsers['tkhd'] = function() {
   this._parseFullBox();
@@ -335,29 +400,7 @@ ISOBox.prototype._boxParsers['tkhd'] = function() {
   }
   this.width = this._readUint(32);
   this.height = this._readUint(32);
-}
-
-// ISO/IEC 14496-12:2012 - 8.8.12 Track Fragmnent Decode Time
-ISOBox.prototype._boxParsers['tfdt'] = function() {
-  this._parseFullBox();
-  if (this.version == 1) {
-    this.baseMediaDecodeTime = this._readUint(64);
-  } else {
-    this.baseMediaDecodeTime = this._readUint(32);    
-  }
-}
-
-// ISO/IEC 14496-12:2012 - 8.8.7 Track Fragment Header Box
-ISOBox.prototype._boxParsers['tfhd'] = function() {
-  this._parseFullBox();
-  this.track_ID = this._readUint(32);
-  if (this.flags & 0x1) this.base_data_offset = this._readUint(64);
-  if (this.flags & 0x2) this.sample_description_offset = this._readUint(32);
-  if (this.flags & 0x8) this.default_sample_duration = this._readUint(32);
-  if (this.flags & 0x10) this.default_sample_size = this._readUint(32);
-  if (this.flags & 0x20) this.default_sample_flags = this._readUint(32);
-}
-
+};
 // ISO/IEC 14496-12:2012 - 8.8.8 Track Run Box
 // Note: the 'trun' box has a direct relation to the 'tfhd' box for defaults.
 // These defaults are not set explicitly here, but are left to resolve for the user.
@@ -380,65 +423,5 @@ ISOBox.prototype._boxParsers['trun'] = function() {
       }
     }
     this.samples.push(sample);
-  }
-};
-var ISOBoxer = ISOBoxer || {};
-
-ISOBoxer.parseBuffer = function(arrayBuffer) {
-  return new ISOFile(arrayBuffer).parse();
-};
-
-ISOBoxer.Utils = {};
-ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
-  if (typeof TextDecoder !== 'undefined') {
-    return new TextDecoder(encoding || 'utf-8').decode(dataView);
-  }
-  var str = '';
-  for (var i=0; i<dataView.byteLength; i++) {
-    str += String.fromCharCode(dataView.getUint8(i));
-  }    
-  return str;  
-};
-
-if (typeof exports !== 'undefined') {
-  exports.parseBuffer = ISOBoxer.parseBuffer;
-  exports.Utils       = ISOBoxer.Utils;
-};
-var ISOFile = function(arrayBuffer) {
-  this._raw = new DataView(arrayBuffer);
-  this._cursor = new ISOBoxer.Cursor();
-  this.boxes = [];
-}
-
-ISOFile.prototype.fetch = function(type) {
-  var result = this.fetchAll(type, true);
-  return (result.length ? result[0] : null);
-}
-
-ISOFile.prototype.fetchAll = function(type, returnEarly) {
-  var result = [];
-  ISOFile._sweep.call(this, type, result, returnEarly);
-  return result;
-}
-
-ISOFile.prototype.parse = function() {
-  this._cursor.offset = 0;
-  this.boxes = [];
-  while (this._cursor.offset < this._raw.byteLength) {
-    var box = ISOBox.parse(this);
-
-    // Box could not be parsed
-    if (typeof box.type === 'undefined') break;
-
-    this.boxes.push(box);
-  }
-  return this;
-}
-
-ISOFile._sweep = function(type, result, returnEarly) {
-  if (this.type && this.type == type) result.push(this);
-  for (var box in this.boxes) {
-    if (result.length && returnEarly) return;
-    ISOFile._sweep.call(this.boxes[box], type, result, returnEarly);
   }
 }

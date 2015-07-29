@@ -9,7 +9,7 @@ module.exports = function(grunt) {
         separator: ';\n'
       },
       dist: {
-        src: ['src/**/*.js'],
+        src: ['src/iso_boxer.js', 'src/cursor.js', 'src/iso_file.js', 'src/iso_box.js', 'src/parsers/*.js'],
         dest: 'dist/iso_boxer.js'
       }
     },

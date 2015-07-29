@@ -1,4 +1,4 @@
-var ISOBoxer = ISOBoxer || {};
+var ISOBoxer = {};
 
 ISOBoxer.parseBuffer = function(arrayBuffer) {
   return new ISOFile(arrayBuffer).parse();
