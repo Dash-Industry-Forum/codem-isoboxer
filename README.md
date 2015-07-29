@@ -43,7 +43,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 
 * emsg
 
-Support for more boxes can easily be added by adding additional box parsers in `src/iso_box.js`. Some utility functions are included to help with reading the various ISOBMFF data types from the raw file. Also, see the [Box Support page on the Wiki](https://github.com/madebyhiro/codem-isoboxer/wiki/Box-support) for a full list.
+Support for more boxes can easily be added by adding additional box parsers in `src/parsers`. Some utility functions are included to help with reading the various ISOBMFF data types from the raw file. Also, see the [Box Support page on the Wiki](https://github.com/madebyhiro/codem-isoboxer/wiki/Box-support) for a full list.
 
 ## Requirements
 
