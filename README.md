@@ -140,6 +140,16 @@ When adding new parsers please consider adding an ISOBMFF test file and a releva
 
 Please note, for size concerns, tests are only included in the Github repository and not in the released packages on NPM.
 
+## Advanced build options
+
+`codem-isoboxer` now has the option for modular builds. This means you can specify which boxes you are interested in during build time and you will get a generated file containing only the necessary boxes. This can help you further decrease the size of the library if you know you will only need access to some boxes. The syntax for building is:
+
+    grunt --boxes=moov,mdat
+
+This will generate a build that only contains the code to parse these boxes and can yield significantly smaller builds. The list needs to be comma-separated. Be sure not to include any white-space in it. Note that some parsers share identical code (e.g. `ftyp`/`styp`, `free`/`skip` and all the regular container boxes). Including one of those will automatically include the other ones as well, but at no additional build size. See `src/parsers` for a list of available parsers and see which parsers share code.
+
+`codem-isoboxer` does not take into account the box hierarchy/dependency when building, you must explicitly specify which boxes you need (e.g. if you want to parse `mvhd` you must also include `moov`).
+
 ## Demo
 
 Open `test/index.html` in your browser. Use the file picker to select a local MPEG-4 file to parse it. Results will be in the `window.parsedFile` variable. Inspect it from your browser's console. Some test files are included in `test/fixtures` (not included in the package published on npmjs.org).
