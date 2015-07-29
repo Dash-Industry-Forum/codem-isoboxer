@@ -24,7 +24,14 @@ ISOBox.prototype._readInt = function(size) {
     break;
   case 32:
     result = this._raw.getInt32(this._cursor.offset - this._raw.byteOffset);
-    break;    
+    break;
+  case 64:
+    // Warning: JavaScript cannot handle 64-bit integers natively.
+    // This will give unexpected results for integers >= 2^53
+    var s1 = this._raw.getInt32(this._cursor.offset - this._raw.byteOffset);
+    var s2 = this._raw.getInt32(this._cursor.offset - this._raw.byteOffset + 4);
+    result = (s1 * Math.pow(2,32)) + s2;
+    break;
   }
   this._cursor.offset += (size >> 3);
   return result;        

@@ -1,3 +1,8 @@
+## codem-isoboxer 0.2.1 (2015/07/29) ##
+
+* Added support for `elst` box
+* Fixed build
+
 ## codem-isoboxer 0.2.0 (2015/07/29) ##
 
 * Added support for modular builds (#1). See README (Advanced build options) for details.

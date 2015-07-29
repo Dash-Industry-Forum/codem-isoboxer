@@ -30,6 +30,20 @@ describe('ftyp box', function() {
   })
 });
 
+describe('elst box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/editlist.mp4');
+    var box = parsedFile.fetch('elst');
+
+    expect(box.size).toEqual(28);
+    expect(box.entry_count).toEqual(1);
+    expect(box.entries[0].media_rate_integer).toEqual(1);
+    expect(box.entries[0].media_rate_fraction).toEqual(0);
+    expect(box.entries[0].media_time).toEqual(1024);
+    expect(box.entries[0].segment_duration).toEqual(1000);
+  })
+});
+
 describe('hdlr box', function() {
   it('should correctly parse the box', function() {
     var parsedFile  = loadParsedFixture('./test/fixtures/captions.mp4');
