@@ -16,6 +16,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 ### ISO/IEC 14496-12:2012 (ISOBMFF)
 * dinf
 * edts
+* elst
 * free / skip
 * ftyp / styp
 * hdlr
