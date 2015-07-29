@@ -148,7 +148,7 @@ Please note, for size concerns, tests are only included in the Github repository
 
 This will generate a build that only contains the code to parse these boxes and can yield significantly smaller builds. The list needs to be comma-separated. Be sure not to include any white-space in it. Note that some parsers share identical code (e.g. `ftyp`/`styp`, `free`/`skip` and all the regular container boxes). Including one of those will automatically include the other ones as well, but at no additional build size. See `src/parsers` for a list of available parsers and see which parsers share code.
 
-`codem-isoboxer` does not take into account the box hierarchy/dependency when building, you must explicitly specify which boxes you need (e.g. if you want to parse `mvhd` you must also include `moov`).
+`codem-isoboxer` does not take into account the box hierarchy/dependency when building, you must explicitly specify which boxes you need (e.g. if you want to parse `mvhd` you must also include `moov`). Boxes that are not included don't have their properties set, but you can still access their type and size properties and the raw data (`._raw`).
 
 ## Demo
 
