@@ -44,6 +44,14 @@ Currently a limited set of ISOBMFF boxes is supported:
 
 * emsg
 
+### ISO/IEC 14496-30:2014 (Timed text and other visual overlays in ISOBMFF)
+
+* vttC
+* vttc
+* vtte
+* vlab
+* payl
+
 Support for more boxes can easily be added by adding additional box parsers in `src/parsers`. Some utility functions are included to help with reading the various ISOBMFF data types from the raw file. Also, see the [Box Support page on the Wiki](https://github.com/madebyhiro/codem-isoboxer/wiki/Box-support) for a full list.
 
 ## Requirements
