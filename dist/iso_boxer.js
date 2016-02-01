@@ -7,14 +7,46 @@ ISOBoxer.parseBuffer = function(arrayBuffer) {
 
 ISOBoxer.Utils = {};
 ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
+  var impliedEncoding = encoding || 'utf-8'
   if (typeof TextDecoder !== 'undefined') {
-    return new TextDecoder(encoding || 'utf-8').decode(dataView);
+    return new TextDecoder(impliedEncoding).decode(dataView);
   }
-  var str = '';
-  for (var i=0; i<dataView.byteLength; i++) {
-    str += String.fromCharCode(dataView.getUint8(i));
-  }    
-  return str;  
+  var a = [];
+  var i = 0;
+  
+  if (impliedEncoding === 'utf-8') {
+    /* The following algorithm is essentially a rewrite of the UTF8.decode at 
+    http://bannister.us/weblog/2007/simple-base64-encodedecode-javascript/
+    */
+  
+    while (i < dataView.byteLength) {
+      var c = dataView.getUint8(i++);
+      if (c < 0x80) {
+        // 1-byte character (7 bits)
+      } else if (c < 0xe0) {
+        // 2-byte character (11 bits)
+        c = (c & 0x1f) << 6;
+        c |= (dataView.getUint8(i++) & 0x3f);
+      } else if (c < 0xf0) {
+        // 3-byte character (16 bits)
+        c = (c & 0xf) << 12;
+        c |= (dataView.getUint8(i++) & 0x3f) << 6;
+        c |= (dataView.getUint8(i++) & 0x3f);
+      } else {
+        // 4-byte character (21 bits)
+        c = (c & 0x7) << 18;
+        c |= (dataView.getUint8(i++) & 0x3f) << 12;
+        c |= (dataView.getUint8(i++) & 0x3f) << 6;
+        c |= (dataView.getUint8(i++) & 0x3f);
+      }
+      a.push(String.fromCharCode(c));
+    }
+  } else { // Just map byte-by-byte (probably wrong)
+    while (i < dataView.byteLength) {
+      a.push(String.fromCharCode(dataView.getUint8(i++)));
+    }
+  }
+  return a.join('');  
 };
 
 if (typeof exports !== 'undefined') {
@@ -201,10 +233,10 @@ ISOBox.prototype._parseFullBox = function() {
 }
 
 ISOBox.prototype._boxParsers = {};;
-// Simple container boxes, all from ISO/IEC 14496-12:2012
+// Simple container boxes, all from ISO/IEC 14496-12:2012 except vttc which is from 14496-30.
 [
   'moov', 'trak', 'tref', 'mdia', 'minf', 'stbl', 'edts', 'dinf',
-  'mvex', 'moof', 'traf', 'mfra', 'udta', 'meco', 'strk'
+  'mvex', 'moof', 'traf', 'mfra', 'udta', 'meco', 'strk', 'vttc'
 ].forEach(function(boxType) {
   ISOBox.prototype._boxParsers[boxType] = function() {
     this.boxes = [];
@@ -212,7 +244,8 @@ ISOBox.prototype._boxParsers = {};;
       this.boxes.push(ISOBox.parse(this));
     }  
   }  
-});
+})
+;
 // ISO/IEC 14496-12:2012 - 8.6.6 Edit List Box
 ISOBox.prototype._boxParsers['elst'] = function() {
   this._parseFullBox();
@@ -328,6 +361,12 @@ ISOBox.prototype._boxParsers['mvhd'] = function() {
   }
   this.next_track_ID = this._readUint(32);
 };
+// ISO/IEC 14496-30:2014 - WebVTT Cue Payload Box.
+ISOBox.prototype._boxParsers['payl'] = function() {
+  var cue_text_raw = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
+  this.cue_text = ISOBoxer.Utils.dataViewToString(cue_text_raw);
+}
+;
 // ISO/IEC 14496-12:2012 - 8.16.3 Segment Index Box
 ISOBox.prototype._boxParsers['sidx'] = function() {
   this._parseFullBox();
@@ -451,4 +490,20 @@ ISOBox.prototype._boxParsers['trun'] = function() {
     }
     this.samples.push(sample);
   }
+};
+// ISO/IEC 14496-30:2014 - WebVTT Source Label Box
+ISOBox.prototype._boxParsers['vlab'] = function() {
+  var source_label_raw = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
+  this.source_label = ISOBoxer.Utils.dataViewToString(source_label_raw);
+}
+;
+// ISO/IEC 14496-30:2014 - WebVTT Configuration Box
+ISOBox.prototype._boxParsers['vttC'] = function() {
+  var config_raw = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
+  this.config = ISOBoxer.Utils.dataViewToString(config_raw);
+}
+;
+// ISO/IEC 14496-30:2014 - WebVTT Empty Sample Box
+ISOBox.prototype._boxParsers['vtte'] = function() {
+  // Nothing should happen here.
 }
