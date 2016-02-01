@@ -98,3 +98,45 @@ describe('ssix box', function() {
     expect(box.subsegments[0].ranges[45].range_size).toEqual(7312);
   })
 })
+
+describe('Text samples', function() {
+  describe('vttc box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/webvtt.m4s');
+      var mdatData = parsedFile.fetch('mdat').data;
+      
+      var buffer = mdatData.buffer.slice(mdatData.byteOffset, mdatData.byteOffset + mdatData.byteLength);
+      var parsedBuffer = ISOBoxer.parseBuffer(buffer);
+      
+      var box = parsedBuffer.boxes[0];
+      expect(box.type).toEqual('vttc');
+    })
+  })
+  
+  describe('payl box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/webvtt.m4s');
+      var mdatData = parsedFile.fetch('mdat').data;
+      
+      var buffer = mdatData.buffer.slice(mdatData.byteOffset, mdatData.byteOffset + mdatData.byteLength);
+      var parsedBuffer = ISOBoxer.parseBuffer(buffer);
+      
+      var box = parsedBuffer.boxes[0].boxes[0];
+      expect(box.type).toEqual('payl');
+      expect(box.cue_text).toEqual("You're a jerk, Thom.\n")
+    })
+  })  
+  
+  describe('vtte box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/webvtt.m4s');
+      var mdatData = parsedFile.fetch('mdat').data;
+      
+      var buffer = mdatData.buffer.slice(mdatData.byteOffset, mdatData.byteOffset + mdatData.byteLength);
+      var parsedBuffer = ISOBoxer.parseBuffer(buffer);
+      
+      var box = parsedBuffer.boxes[1];
+      expect(box.type).toEqual('vtte');
+    })
+  })  
+})
