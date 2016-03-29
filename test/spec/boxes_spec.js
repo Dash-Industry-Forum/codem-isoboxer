@@ -71,6 +71,28 @@ describe('mdat box', function() {
   
 })
 
+describe('mehd box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/test_frag.mp4');
+    var box = parsedFile.fetch('mehd');
+    
+    expect(box.type).toEqual('mehd');
+    expect(box.size).toEqual(16);
+    expect(box.fragment_duration).toEqual(2047);
+  })
+})
+
+describe('mfro box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/test_frag.mp4');
+    var box = parsedFile.fetch('mfro');
+    
+    expect(box.type).toEqual('mfro');
+    expect(box.size).toEqual(16);
+    expect(box.mfra_size).toEqual(105);
+  })
+})
+
 describe('moov box', function() {
   it('should correctly parse the box', function() {
     var parsedFile  = loadParsedFixture('./test/fixtures/captions.mp4');
@@ -96,6 +118,31 @@ describe('ssix box', function() {
     expect(box.subsegments[0].ranges_count).toEqual(70);
     expect(box.subsegments[0].ranges[45].level).toEqual(2);
     expect(box.subsegments[0].ranges[45].range_size).toEqual(7312);
+  })
+})
+
+describe('trex box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/test_frag.mp4');
+    var boxes = parsedFile.fetchAll('trex');
+    
+    expect(boxes.length).toEqual(2);
+    
+    expect(boxes[0].type).toEqual('trex');
+    expect(boxes[0].size).toEqual(32);
+    expect(boxes[0].track_ID).toEqual(1);
+    expect(boxes[0].default_sample_description_index).toEqual(1);
+    expect(boxes[0].default_sample_duration).toEqual(0);
+    expect(boxes[0].default_sample_size).toEqual(0);
+    expect(boxes[0].default_sample_flags).toEqual(0);
+
+    expect(boxes[1].type).toEqual('trex');
+    expect(boxes[1].size).toEqual(32);
+    expect(boxes[1].track_ID).toEqual(2);
+    expect(boxes[1].default_sample_description_index).toEqual(1);
+    expect(boxes[1].default_sample_duration).toEqual(0);
+    expect(boxes[1].default_sample_size).toEqual(0);
+    expect(boxes[1].default_sample_flags).toEqual(0);
   })
 })
 
