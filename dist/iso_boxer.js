@@ -326,11 +326,27 @@ ISOBox.prototype._boxParsers['mdhd'] = function() {
   );
   this.pre_defined = this._readUint(16);
 };
+// ISO/IEC 14496-12:2012 - 8.8.2 Movie Extends Header Box
+ISOBox.prototype._boxParsers['mehd'] = function() {
+  this._parseFullBox();
+
+  if (this.version == 1) {
+    this.fragment_duration = this._readUint(64);
+   } else { // version==0
+    this.fragment_duration = this._readUint(32);
+   }
+};
 // ISO/IEC 14496-12:2012 - 8.8.5 Movie Fragment Header Box
 ISOBox.prototype._boxParsers['mfhd'] = function() {
   this._parseFullBox();
   this.sequence_number = this._readUint(32);
 };
+// ISO/IEC 14496-12:2012 - 8.8.11 Movie Fragment Random Access Box
+ISOBox.prototype._boxParsers['mfro'] = function() {
+	this._parseFullBox();
+	this.mfra_size = this._readUint(32);
+}
+;
 // ISO/IEC 14496-12:2012 - 8.2.2 Movie Header Box
 ISOBox.prototype._boxParsers['mvhd'] = function() {
   this._parseFullBox();
@@ -415,6 +431,55 @@ ISOBox.prototype._boxParsers['ssix'] = function() {
     this.subsegments.push(subsegment);
   }
 };
+// ISO/IEC 14496-12:2012 - 8.5.2 Sample Description Box
+ISOBox.prototype._boxParsers['stsd'] = function() {
+  this._parseFullBox();
+  this.num_sample_entries = this._readUint(32);
+  this.entries = [];
+
+  for (var i = 0; i < this.num_sample_entries ; i++){
+  	var entry = {};
+  	entry.size = this._readUint(32);
+  	entry.char_code = this._readString(4);
+  	entry.reserved = [ this._readUint(16), this._readUint(16), this._readUint(16) ]
+  	entry.data_reference_index = this._readUint(16);
+
+  	// common data audio / video
+
+  	entry.verion = this._readUint(16);
+  	entry.revision_level = this._readUint(16);
+  	entry.vendor = this._readUint(32);
+
+  	if (entry.char_code == "avc1"){
+  		//avc
+  		entry.temporal_quality = this._readUint(32);
+  		entry.spatial_quality = this._readUint(32);
+  		entry.width = this._readUint(16);
+  		entry.height = this._readUint(16);
+  		entry.horizontal_resolution = this._readUint(32);
+  		entry.vertical_resolution = this._readUint(32);
+  		entry.data_size = this._readUint(32);   // must be 0x0
+  		entry.frame_count = this._readUint(16);  // frames per sample
+  		entry.compressor_name = this._readUint(32);
+  		entry.depth = this._readUint(16);
+  		entry.color_table_id = this._readUint(16);
+
+
+  	}else if(entry.char_code == "mp4a"){
+  		//mp4a
+  		entry.channels = this._readUint(16);
+  		entry.sample_size = this._readUint(16); // 8 or 16
+  		entry.compression_id = this._readUint(16);
+  		entry.packet_size = this._readUint(16);  // should be 0x0
+  		entry.sample_rate = this._readUint(32);
+  	}
+
+  	//entry.data = this.data = new DataView(this._raw.buffer, this._cursor.offset, entry.size - 8);
+  	this.entries.push(entry);
+  }
+
+}
+;
 // ISO/IEC 14496-12:2012 - 8.8.12 Track Fragmnent Decode Time
 ISOBox.prototype._boxParsers['tfdt'] = function() {
   this._parseFullBox();
@@ -434,6 +499,41 @@ ISOBox.prototype._boxParsers['tfhd'] = function() {
   if (this.flags & 0x10) this.default_sample_size = this._readUint(32);
   if (this.flags & 0x20) this.default_sample_flags = this._readUint(32);
 };
+// ISO/IEC 14496-12:2012 - 8.8.10 Track Fragment Random Access Box
+ISOBox.prototype._boxParsers['tfra'] = function() {
+	this._parseFullBox();
+	this.track_id = this._readUint(32);
+	this.packed = this._readUint(32);
+
+	this.reserved = this.packed >>> 6;
+
+	this.length_size_of_traf_num = (this.packed && 0xFFFF00000000) >>> 4;
+	this.length_size_of_trun_num = (this.packed && 0xFFFF0000) >>> 2;
+	this.length_size_of_sample_num = this.packed && 0xFF;
+
+	this.num_of_entries = this._readUint(32);
+
+	this.entries = [];
+
+	for (var i = 0; i < this.num_of_entries ; i++){
+		var entry = {};
+
+		if(this.version==1){
+			entry.time = this._readUint(64);
+			entry.moof_offset = this._readUint(64);
+		}else{
+			entry.time = this._readUint(32);
+			entry.moof_offset = this._readUint(32);
+		}
+
+		entry.traf_number = this._readUint((this.length_size_of_traf_num + 1) * 8);
+		entry.trun_number = this._readUint((this.length_size_of_trun_num + 1) * 8);
+		entry.sample_number = this._readUint((this.length_size_of_sample_num + 1) * 8);
+
+		this.entries.push(entry);
+	}
+}
+;
 // ISO/IEC 14496-12:2012 - 8.3.2 Track Header Box
 ISOBox.prototype._boxParsers['tkhd'] = function() {
   this._parseFullBox();
@@ -466,6 +566,17 @@ ISOBox.prototype._boxParsers['tkhd'] = function() {
   }
   this.width = this._readUint(32);
   this.height = this._readUint(32);
+};
+// ISO/IEC 14496-12:2012 - 8.8.3 Track Extends Box
+ISOBox.prototype._boxParsers['trex'] = function() {
+	this._parseFullBox();
+
+	this.track_id = this._readUint(32);
+	this.default_sample_description_index = this._readUint(32);
+	this.default_sample_duration = this._readUint(32);
+	this.default_sample_size = this._readUint(32);
+	this.default_sample_flags = this._readUint(32);
+
 };
 // ISO/IEC 14496-12:2012 - 8.8.8 Track Run Box
 // Note: the 'trun' box has a direct relation to the 'tfhd' box for defaults.
