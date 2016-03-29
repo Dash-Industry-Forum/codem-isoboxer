@@ -1,3 +1,7 @@
+## codem-isoboxer 0.2.3 (2016/03/29) ##
+
+* Added support for mehd, mfro, stsd (partial), tfra and trex (@danotrilogic)
+
 ## codem-isoboxer 0.2.2 (2016/02/01) ##
 
 * Added support for WebVTT cues (vttC, vttc, vlab, payl, vtte)
