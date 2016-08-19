@@ -124,7 +124,7 @@ that contain buffers/dataviews/circular references. It might not look pretty in 
 
 ## Development
 
-Check out the source from Github. Make changes to the files in `/src`. We use `grunt` to build the distribution files. If you add a box parser be sure to include a comment that points toward the relevant section in the specs. And if at all possible add a (small!) file to `test/fixtures` to provide an example.
+Check out the source from Github. Make changes to the files in `/src` (not in `/dist`). We use `grunt` to build the distribution files. If you add a box parser be sure to include a comment that points toward the relevant section in the specs. And if at all possible add a (small!) file to `test/fixtures` to provide an example.
 The test directory is not included in the published package on npmjs.org because of the included MPEG-4 files.
 
 ### Building
