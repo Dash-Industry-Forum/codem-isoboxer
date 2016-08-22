@@ -56,7 +56,14 @@ describe('hdlr box', function() {
     expect(box.handler_type).toEqual('subt');
     expect(box.reserved).toEqual([0,0,0]);
     expect(box.name).toEqual('*xml:ext=ttml@GPAC0.5.1-DEV-rev5545');
-  })  
+  })
+  
+  it('should handle null-terminated strings that are not null-terminated and might exceed box boundaries', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/240fps_go_pro_hero_4.mp4');
+    var box = parsedFile.fetch('hdlr');
+    
+    expect(box.name).toEqual("\tGoPro AVC");
+  })
 })
 
 describe('mdat box', function() {
@@ -118,6 +125,18 @@ describe('ssix box', function() {
     expect(box.subsegments[0].ranges_count).toEqual(70);
     expect(box.subsegments[0].ranges[45].level).toEqual(2);
     expect(box.subsegments[0].ranges[45].range_size).toEqual(7312);
+  })
+})
+
+describe('stsd box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/240fps_go_pro_hero_4.mp4');    
+    var stsd = parsedFile.fetchAll('stsd');
+    
+    expect(stsd.length).toEqual(3);
+    expect(stsd[0].entries[0].type).toEqual('avc1');
+    expect(stsd[1].entries[0].type).toEqual('mp4a');
+    expect(stsd[2].entries[0].type).toEqual('fdsc');
   })
 })
 

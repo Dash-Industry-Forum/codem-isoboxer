@@ -173,7 +173,7 @@ ISOBox.prototype._readString = function(length) {
 
 ISOBox.prototype._readTerminatedString = function() {
   var str = '';
-  while (true) {
+  while (this._cursor.offset - this._offset < this._raw.byteLength) {
     var char = this._readUint(8);
     if (char == 0) break;
     str += String.fromCharCode(char);
@@ -224,7 +224,7 @@ ISOBox.prototype._parseBox = function() {
   }
 
   // additional parsing
-  if (!this._incomplete && this._boxParsers[this.type]) this._boxParsers[this.type].call(this);    
+  if (!this._incomplete && this._boxParsers[this.type]) this._boxParsers[this.type].call(this);
 }
 
 ISOBox.prototype._parseFullBox = function() {
@@ -233,6 +233,23 @@ ISOBox.prototype._parseFullBox = function() {
 }
 
 ISOBox.prototype._boxParsers = {};;
+// ISO/IEC 14496-15:2014 - avc1 box
+ISOBox.prototype._boxParsers['avc1'] = function() {
+  this.version               = this._readUint(16);
+  this.revision_level        = this._readUint(16);
+  this.vendor                = this._readUint(32);
+  this.temporal_quality      = this._readUint(32);
+  this.spatial_quality       = this._readUint(32);
+  this.width                 = this._readUint(16);
+  this.height                = this._readUint(16);
+  this.horizontal_resolution = this._readUint(32);
+  this.vertical_resolution   = this._readUint(32);
+  this.data_size             = this._readUint(32);
+  this.frame_count           = this._readUint(16);
+  this.compressor_name       = this._readUint(32);
+  this.depth                 = this._readUint(16);
+  this.color_table_id        = this._readUint(16);
+};
 // Simple container boxes, all from ISO/IEC 14496-12:2012 except vttc which is from 14496-30.
 [
   'moov', 'trak', 'tref', 'mdia', 'minf', 'stbl', 'edts', 'dinf',
@@ -347,6 +364,15 @@ ISOBox.prototype._boxParsers['mfro'] = function() {
   this.mfra_size = this._readUint(32); // Called mfra_size to distinguish from the normal "size" attribute of a box
 }
 ;
+// ISO/IEC 14496-12:2012 - 8.5.2.2 mp4a box (use AudioSampleEntry definition and naming)
+ISOBox.prototype._boxParsers['mp4a'] = function() {
+  this.reserved1    = [this._readUint(32), this._readUint(32)];
+  this.channelcount = this._readUint(16);
+  this.samplesize   = this._readUint(16);
+  this.pre_defined  = this._readUint(16);
+  this.reserved2    = this._readUint(16);
+  this.sample_rate  = this._readUint(32);
+};
 // ISO/IEC 14496-12:2012 - 8.2.2 Movie Header Box
 ISOBox.prototype._boxParsers['mvhd'] = function() {
   this._parseFullBox();
@@ -432,52 +458,14 @@ ISOBox.prototype._boxParsers['ssix'] = function() {
   }
 };
 // ISO/IEC 14496-12:2012 - 8.5.2 Sample Description Box
-// TODO: This needs cleanup and a much more complete implementation
 ISOBox.prototype._boxParsers['stsd'] = function() {
   this._parseFullBox();
   this.entry_count = this._readUint(32);
   this.entries = [];
 
   for (var i = 0; i < this.entry_count ; i++){
-    var entry = {};
-    entry.size = this._readUint(32);
-    entry.char_code = this._readString(4);
-    entry.reserved = [ this._readUint(16), this._readUint(16), this._readUint(16) ]
-    entry.data_reference_index = this._readUint(16);
-
-    // common data audio / video
-    entry.version = this._readUint(16);
-    entry.revision_level = this._readUint(16);
-    entry.vendor = this._readUint(32);
-
-    if (entry.char_code == "avc1"){
-      //avc
-      entry.temporal_quality = this._readUint(32);
-      entry.spatial_quality = this._readUint(32);
-      entry.width = this._readUint(16);
-      entry.height = this._readUint(16);
-      entry.horizontal_resolution = this._readUint(32);
-      entry.vertical_resolution = this._readUint(32);
-      entry.data_size = this._readUint(32);   // must be 0x0
-      entry.frame_count = this._readUint(16);  // frames per sample
-      entry.compressor_name = this._readUint(32);
-      entry.depth = this._readUint(16);
-      entry.color_table_id = this._readUint(16);
-
-
-    }else if(entry.char_code == "mp4a"){
-      //mp4a
-      entry.channels = this._readUint(16);
-      entry.sample_size = this._readUint(16); // 8 or 16
-      entry.compression_id = this._readUint(16);
-      entry.packet_size = this._readUint(16);  // should be 0x0
-      entry.sample_rate = this._readUint(32);
-    }
-
-    //entry.data = this.data = new DataView(this._raw.buffer, this._cursor.offset, entry.size - 8);
-    this.entries.push(entry);
+    this.entries.push(ISOBox.parse(this));
   }
-
 }
 ;
 // ISO/IEC 14496-12:2012 - 8.8.12 Track Fragmnent Decode Time

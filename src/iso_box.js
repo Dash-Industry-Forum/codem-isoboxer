@@ -77,7 +77,7 @@ ISOBox.prototype._readString = function(length) {
 
 ISOBox.prototype._readTerminatedString = function() {
   var str = '';
-  while (true) {
+  while (this._cursor.offset - this._offset < this._raw.byteLength) {
     var char = this._readUint(8);
     if (char == 0) break;
     str += String.fromCharCode(char);
@@ -128,7 +128,7 @@ ISOBox.prototype._parseBox = function() {
   }
 
   // additional parsing
-  if (!this._incomplete && this._boxParsers[this.type]) this._boxParsers[this.type].call(this);    
+  if (!this._incomplete && this._boxParsers[this.type]) this._boxParsers[this.type].call(this);
 }
 
 ISOBox.prototype._parseFullBox = function() {

@@ -1,3 +1,10 @@
+## codem-isoboxer 0.2.4 (2016/08/22) ##
+
+* Split stsd into separate box parsers (entries are simply boxes)
+* Added separate mp4a, avc1 parsers with minor tweaks
+* Fixed an error where a null-terminated field containing a string that is not terminated might exceed box boundaries
+* Updated dependencies
+
 ## codem-isoboxer 0.2.3 (2016/03/29) ##
 
 * Added support for mehd, mfro, stsd (partial), tfra and trex (@danotrilogic)
