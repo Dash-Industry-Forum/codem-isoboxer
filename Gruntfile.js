@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-  var banner = '/*! <%= pkg.name %> v<%= pkg.version %> <%= pkg.licenses[0].url %> */\n';
+  var banner = '/*! <%= pkg.name %> v<%= pkg.version %> <%= licenseUrl %> */\n';
   var boxes = grunt.option('boxes');
   
   function getDestinationFile() {
@@ -40,6 +40,7 @@ module.exports = function(grunt) {
   
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    licenseUrl: 'https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt', 
     concat: {
       options: {
         banner: banner,

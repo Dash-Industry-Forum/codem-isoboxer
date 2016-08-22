@@ -19,16 +19,12 @@
     "email": "sjoerd@madebyhiro.com",
     "url": "http://madebyhiro.com/"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt"
-    }
-  ],
+  "license": "MIT",
   "devDependencies": {
-    "grunt-contrib-concat": "^0.5.1",
-    "grunt-contrib-uglify": "^0.8.0",
-    "grunt-contrib-watch": "^0.6.1",
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-watch": "^1.0.0",
     "jasmine-node": "^1.14.5"
   },
   "scripts": {
