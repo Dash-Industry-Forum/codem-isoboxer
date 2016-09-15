@@ -4,6 +4,13 @@ ISOBoxer.parseBuffer = function(arrayBuffer) {
   return new ISOFile(arrayBuffer).parse();
 };
 
+ISOBoxer.addBoxParser = function(type, parser) {
+  if (typeof type !== 'string' || typeof parser !== 'function') {
+    return;
+  }
+  ISOBox.prototype._boxParsers[type] = parser;
+};
+
 ISOBoxer.Utils = {};
 ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
   var impliedEncoding = encoding || 'utf-8'
@@ -50,5 +57,6 @@ ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
 
 if (typeof exports !== 'undefined') {
   exports.parseBuffer = ISOBoxer.parseBuffer;
+  exports.addBoxParser   = ISOBoxer.addBoxParser;
   exports.Utils       = ISOBoxer.Utils;
 }
