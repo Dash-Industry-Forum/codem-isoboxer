@@ -1,3 +1,7 @@
+## codem-isoboxer 0.2.6 (2016/09/16) ##
+
+* Added API to add additional box parsers using `addBoxParser` (@NatalyMagluy)
+
 ## codem-isoboxer 0.2.4 / 0.2.5 (2016/08/22) ##
 
 * Split stsd into separate box parsers (entries are simply boxes)
