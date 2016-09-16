@@ -27,6 +27,14 @@ describe('ISOBoxer', function() {
     expect(ISOBoxer.Utils.dataViewToString(dataView)).toEqual('test string')
   })
   
+  it('should allow adding additional box parsers', function() {
+    var emptyFunction = function() { }
+    var parsedFile = loadParsedFixture('./test/fixtures/captions.mp4');
+    var box = parsedFile.boxes[0];
+    ISOBoxer.addBoxParser('xxxx', emptyFunction);
+    expect(box._boxParsers['xxxx']).toEqual(emptyFunction);
+  })
+  
   describe('when parsing an incomplete buffer', function() {
     it('should mark the incomplete box and root object as incomplete', function() {
       var parsedFile = loadParsedFixture('./test/fixtures/spliced_1500.m4v');
