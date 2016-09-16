@@ -56,7 +56,7 @@ ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
 };
 
 if (typeof exports !== 'undefined') {
-  exports.parseBuffer = ISOBoxer.parseBuffer;
-  exports.addBoxParser   = ISOBoxer.addBoxParser;
-  exports.Utils       = ISOBoxer.Utils;
+  exports.parseBuffer  = ISOBoxer.parseBuffer;
+  exports.addBoxParser = ISOBoxer.addBoxParser;
+  exports.Utils        = ISOBoxer.Utils;
 }
