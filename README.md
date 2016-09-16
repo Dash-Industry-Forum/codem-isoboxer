@@ -4,7 +4,7 @@
 
 ## Description
 
-`codem-isoboxer` is a small browser-based MPEG-4 (ISOBMFF) parser. It is meant to be small, fast and efficient. A typical use-case would be inclusion in a new player framework (for emerging standards such as MPEG-DASH which rely on ISOBMFF for most situations) or to extract metadata from MPEG-4 files:
+`codem-isoboxer` is a lightweight JavaScript MP4 (MPEG-4, ISOBMFF) parser. It is meant to be small, fast and efficient. A typical use-case would be inclusion in a new player framework (for emerging standards such as MPEG-DASH which rely on ISOBMFF for most situations, or HLS using fragmented MP4) or to extract metadata from MPEG-4 files:
 
 * Parsing `emsg` boxes for in-band events;
 * Parsing `mdat` boxes for extracting subtitles;
@@ -24,19 +24,26 @@ Currently a limited set of ISOBMFF boxes is supported:
 * mdia
 * mdhd
 * meco
+* mehd
+* mfhd
 * mfra
+* mfro
 * minf
 * moov / moof
+* mp4a
 * mvex
 * mvhd / mfhd
 * sidx
 * ssix
 * stbl
+* stsd
 * strk
 * tfhd / tkhd
 * tfdt
+* tfra
 * traf / trak
 * tref
+* trex
 * trun
 * udta
 
@@ -51,6 +58,10 @@ Currently a limited set of ISOBMFF boxes is supported:
 * vtte
 * vlab
 * payl
+
+### ISO/IEC 14496-15:2014 (Carriage of network abstraction layer (NAL) unit structured video in ISO base media file format)
+
+* avc1
 
 Support for more boxes can easily be added by adding additional box parsers in `src/parsers`. Some utility functions are included to help with reading the various ISOBMFF data types from the raw file. Also, see the [Box Support page on the Wiki](https://github.com/madebyhiro/codem-isoboxer/wiki/Box-support) for a full list.
 
