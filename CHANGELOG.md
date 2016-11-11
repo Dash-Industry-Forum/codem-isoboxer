@@ -1,3 +1,7 @@
+## codem-isoboxer 0.2.7 (2016/11/11) ##
+
+* Merged `subs` support (@TobbeEdgeware)
+
 ## codem-isoboxer 0.2.6 (2016/09/16) ##
 
 * Added API to add additional box parsers using `addBoxParser` (@NatalyMagluy)
