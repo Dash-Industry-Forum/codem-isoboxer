@@ -38,6 +38,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 * stbl
 * stsd
 * strk
+* subs
 * tfhd / tkhd
 * tfdt
 * tfra
