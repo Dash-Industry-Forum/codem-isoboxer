@@ -16,7 +16,7 @@ ISOBox.prototype._boxParsers['mp4a'] = function() {
   this.samplesize   = this._readUint(16);
   this.pre_defined  = this._readUint(16);
   this.reserved3    = this._readUint(16);
-  this.samplerate   = this._readUint(32);
+  this.samplerate   = this._readTemplate(32);
   // ESDescriptor fields
   this.esds = this._readData();
 }
