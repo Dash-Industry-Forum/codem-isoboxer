@@ -28,6 +28,6 @@ ISOBox.prototype._boxParsers['tkhd'] = function() {
   for (var i=0; i<9; i++) {
     this.matrix.push(this._readTemplate(32));
   }
-  this.width = this._readUint(32);
-  this.height = this._readUint(32);
+  this.width = this._readTemplate(32);
+  this.height = this._readTemplate(32);
 }
