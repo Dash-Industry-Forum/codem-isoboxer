@@ -2,4 +2,4 @@
 ISOBox.prototype._boxParsers['mfhd'] = function() {
   this._parseFullBox();
   this.sequence_number = this._readUint(32);
-}
+};

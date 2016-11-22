@@ -1,7 +1,7 @@
 // ISO/IEC 14496-12:2012 - 8.3.2 Track Header Box
 ISOBox.prototype._boxParsers['tkhd'] = function() {
   this._parseFullBox();
-  
+
   if (this.version == 1) {
     this.creation_time     = this._readUint(64);
     this.modification_time = this._readUint(64);
@@ -15,7 +15,7 @@ ISOBox.prototype._boxParsers['tkhd'] = function() {
     this.reserved1         = this._readUint(32);
     this.duration          = this._readUint(32);
   }
-  
+
   this.reserved2 = [
     this._readUint(32),
     this._readUint(32)
@@ -30,4 +30,4 @@ ISOBox.prototype._boxParsers['tkhd'] = function() {
   }
   this.width = this._readUint(32);
   this.height = this._readUint(32);
-}
+};

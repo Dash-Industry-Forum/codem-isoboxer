@@ -7,4 +7,4 @@ ISOBox.prototype._boxParsers['tfhd'] = function() {
   if (this.flags & 0x8) this.default_sample_duration = this._readUint(32);
   if (this.flags & 0x10) this.default_sample_size = this._readUint(32);
   if (this.flags & 0x20) this.default_sample_flags = this._readUint(32);
-}
+};

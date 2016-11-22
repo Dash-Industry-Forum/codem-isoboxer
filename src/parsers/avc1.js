@@ -14,4 +14,4 @@ ISOBox.prototype._boxParsers['avc1'] = function() {
   this.compressor_name       = this._readUint(32);
   this.depth                 = this._readUint(16);
   this.color_table_id        = this._readUint(16);
-}
+};

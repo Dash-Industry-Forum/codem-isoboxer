@@ -7,6 +7,6 @@
     this.boxes = [];
     while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
       this.boxes.push(ISOBox.parse(this));
-    }  
-  }  
-})
+    }
+  };
+});

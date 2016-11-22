@@ -34,11 +34,12 @@ ISOBox.prototype._readInt = function(size) {
     break;
   }
   this._cursor.offset += (size >> 3);
-  return result;        
-}
+  return result;
+};
 
 ISOBox.prototype._readUint = function(size) {
-  var result = null;
+  var result = null,
+      s1, s2;
   switch(size) {
   case 8:
     result = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset);
@@ -47,8 +48,8 @@ ISOBox.prototype._readUint = function(size) {
     result = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
     break;
   case 24:
-    var s1 = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
-    var s2 = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset + 2);
+    s1 = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
+    s2 = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset + 2);
     result = (s1 << 8) + s2;
     break;
   case 32:
@@ -57,14 +58,14 @@ ISOBox.prototype._readUint = function(size) {
   case 64:
     // Warning: JavaScript cannot handle 64-bit integers natively.
     // This will give unexpected results for integers >= 2^53
-    var s1 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset);
-    var s2 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset + 4);
+    s1 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset);
+    s2 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset + 4);
     result = (s1 * Math.pow(2,32)) + s2;
     break;
   }
   this._cursor.offset += (size >> 3);
-  return result;        
-}
+  return result;
+};
 
 ISOBox.prototype._readString = function(length) {
   var str = '';
@@ -72,34 +73,34 @@ ISOBox.prototype._readString = function(length) {
     var char = this._readUint(8);
     str += String.fromCharCode(char);
   }
-  return str;    
-}
+  return str;
+};
 
 ISOBox.prototype._readTerminatedString = function() {
   var str = '';
   while (this._cursor.offset - this._offset < this._raw.byteLength) {
     var char = this._readUint(8);
-    if (char == 0) break;
+    if (char === 0) break;
     str += String.fromCharCode(char);
   }
   return str;
-}
+};
 
 ISOBox.prototype._readTemplate = function(size) {
   var pre = this._readUint(size / 2);
   var post = this._readUint(size / 2);
   return pre + (post / Math.pow(2, size / 2));
-}
+};
 
 ISOBox.prototype._parseBox = function() {
   this._cursor.offset = this._offset;
-  
+
   // return immediately if there are not enough bytes to read the header
   if (this._offset + 8 > this._raw.buffer.byteLength) {
     this._root._incomplete = true;
     return;
   }
-  
+
   this.size = this._readUint(32);
   this.type = this._readString(4);
 
@@ -115,7 +116,7 @@ ISOBox.prototype._parseBox = function() {
       this._incomplete = true;
       this._root._incomplete = true;
     } else {
-      this._raw = new DataView(this._raw.buffer, this._offset, this.largesize);      
+      this._raw = new DataView(this._raw.buffer, this._offset, this.largesize);
     }
     break;
   default:
@@ -123,17 +124,17 @@ ISOBox.prototype._parseBox = function() {
       this._incomplete = true;
       this._root._incomplete = true;
     } else {
-      this._raw = new DataView(this._raw.buffer, this._offset, this.size);      
+      this._raw = new DataView(this._raw.buffer, this._offset, this.size);
     }
   }
 
   // additional parsing
   if (!this._incomplete && this._boxParsers[this.type]) this._boxParsers[this.type].call(this);
-}
+};
 
 ISOBox.prototype._parseFullBox = function() {
   this.version = this._readUint(8);
   this.flags = this._readUint(24);
-}
+};
 
 ISOBox.prototype._boxParsers = {};

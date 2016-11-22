@@ -3,6 +3,6 @@ ISOBox.prototype._boxParsers['hdlr'] = function() {
   this._parseFullBox();
   this.pre_defined = this._readUint(32);
   this.handler_type = this._readString(4);
-  this.reserved = [this._readUint(32), this._readUint(32), this._readUint(32)]
-  this.name = this._readTerminatedString()
-}
+  this.reserved = [this._readUint(32), this._readUint(32), this._readUint(32)];
+  this.name = this._readTerminatedString();
+};

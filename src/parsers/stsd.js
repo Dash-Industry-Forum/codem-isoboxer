@@ -7,4 +7,4 @@ ISOBox.prototype._boxParsers['stsd'] = function() {
   for (var i = 0; i < this.entry_count ; i++){
     this.entries.push(ISOBox.parse(this));
   }
-}
+};
