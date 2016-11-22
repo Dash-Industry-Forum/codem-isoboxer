@@ -24,7 +24,11 @@ ISOBox.prototype._boxParsers['avc1'] = function() {
   this.vertresolution        = this._readTemplate(32);
   this.reserved3             = this._readUint(32);
   this.frame_count           = this._readUint(16);
-  this.compressorname        = this._readData(32);
+  var length = this._readUint(8);
+  this.compressorname        = this._readString(length);
+  for (var i = 0; i < (31 - length); i++) {
+    this._readUint(8);
+  }
   this.depth                 = this._readUint(16);
   this.pre_defined3          = this._readInt(16);
   // AVCSampleEntry fields
