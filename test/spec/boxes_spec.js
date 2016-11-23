@@ -140,6 +140,52 @@ describe('stsd box', function() {
   })
 })
 
+describe('avc1 box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/240fps_go_pro_hero_4.mp4');
+    var stsd = parsedFile.fetchAll('stsd');
+    var box = stsd[0].entries[0];
+
+    expect(box.type).toEqual('avc1');
+    expect(box.size).toEqual(184);
+    expect(box.reserved1).toEqual([0, 0, 0, 0, 0, 0]);
+    expect(box.data_reference_index).toEqual(1);
+    expect(box.pre_defined1).toEqual(0);
+    expect(box.reserved2).toEqual(0);
+    expect(box.pre_defined2).toEqual([0, 0, 0]);
+    expect(box.width).toEqual(1280);
+    expect(box.height).toEqual(720);
+    expect(box.horizresolution).toEqual(72);
+    expect(box.vertresolution).toEqual(72);
+    expect(box.reserved3).toEqual(0);
+    expect(box.frame_count).toEqual(1);
+    expect(box.compressorname).toEqual('GoPro AVC encoder');
+    expect(box.depth).toEqual(24);
+    expect(box.pre_defined3).toEqual(-1);
+    expect(box.config.byteLength).toEqual(98);
+  })
+})
+
+describe('mp4a box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/240fps_go_pro_hero_4.mp4');
+    var stsd = parsedFile.fetchAll('stsd');
+    var box = stsd[1].entries[0];
+
+    expect(box.type).toEqual('mp4a');
+    expect(box.size).toEqual(86);
+    expect(box.reserved1).toEqual([0, 0, 0, 0, 0, 0]);
+    expect(box.data_reference_index).toEqual(1);
+    expect(box.reserved2).toEqual([0, 0]);
+    expect(box.channelcount).toEqual(2);
+    expect(box.samplesize).toEqual(16);
+    //expect(box.pre_defined).toEqual(0); // not conformed value in the file, not tested
+    expect(box.reserved3).toEqual(0);
+    expect(box.samplerate).toEqual(48000);
+    expect(box.esds.byteLength).toEqual(50);
+  })
+})
+
 describe('trex box', function() {
   it('should correctly parse the box', function() {
     var parsedFile  = loadParsedFixture('./test/fixtures/test_frag.mp4');

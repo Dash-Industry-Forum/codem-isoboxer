@@ -91,6 +91,13 @@ ISOBox.prototype._readTemplate = function(size) {
   return pre + (post / Math.pow(2, size / 2));
 }
 
+ISOBox.prototype._readData = function(size) {
+  var length = (size > 0) ? size : (this._raw.byteLength - (this._cursor.offset - this._offset));
+  var data = new DataView(this._raw.buffer, this._cursor.offset, length);
+  this._cursor.offset += length;
+  return data;
+}
+
 ISOBox.prototype._parseBox = function() {
   this._cursor.offset = this._offset;
   
