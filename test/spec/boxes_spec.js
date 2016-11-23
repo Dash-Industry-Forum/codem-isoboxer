@@ -277,4 +277,15 @@ describe('Text samples', function() {
       expect(boxes[0].balance).toEqual(0.0);
     })
   })
+
+  describe('vmhd box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/240fps_go_pro_hero_4.mp4');
+      var boxes = parsedFile.fetchAll('vmhd');
+      expect(boxes.length).toEqual(1);
+      expect(boxes[0].type).toEqual('vmhd');
+      expect(boxes[0].graphicsmode).toEqual(0);
+      expect(boxes[0].opcolor).toEqual([0,0,0]);
+    })
+  })
 })
