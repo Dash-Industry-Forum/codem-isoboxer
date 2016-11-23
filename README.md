@@ -1,5 +1,7 @@
 # codem-isoboxer
 
+[![Build Status](https://travis-ci.org/madebyhiro/codem-isoboxer.svg?branch=master)](https://travis-ci.org/madebyhiro/codem-isoboxer)
+
 * http://github.com/madebyhiro/codem-isoboxer
 
 ## Description
