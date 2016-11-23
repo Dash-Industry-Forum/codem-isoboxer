@@ -267,4 +267,14 @@ describe('Text samples', function() {
       expect(sample.subsamples[2].size).toEqual(5);
     })
   })
+
+  describe('smhd box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/240fps_go_pro_hero_4.mp4');
+      var boxes = parsedFile.fetchAll('smhd');
+      expect(boxes.length).toEqual(1);
+      expect(boxes[0].type).toEqual('smhd');
+      expect(boxes[0].balance).toEqual(0.0);
+    })
+  })
 })
