@@ -288,4 +288,17 @@ describe('Text samples', function() {
       expect(boxes[0].opcolor).toEqual([0,0,0]);
     })
   })
+
+  describe('dref box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/240fps_go_pro_hero_4.mp4');
+      var boxes = parsedFile.fetchAll('dref');
+      expect(boxes.length).toEqual(3);
+      expect(boxes[0].type).toEqual('dref');
+      expect(boxes[0].entries.length).toEqual(1);
+      expect(boxes[0].entries[0].type).toEqual('alis');
+      expect(boxes[0].entries[0].version).toEqual(0);
+      expect(boxes[0].entries[0].flags).toEqual(1);
+    })
+  })
 })
