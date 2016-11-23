@@ -41,25 +41,60 @@ ISOBox.prototype._readUint = function(size) {
   var result = null;
   switch(size) {
   case 8:
-    result = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset);
+    if(this._raw.byteLength <= (this._cursor.offset - this._raw.byteOffset))
+    {
+      result = 0;
+    }
+    else
+    {
+      result = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset);
+    }
     break;
   case 16:
-    result = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
+    if(this._raw.byteLength <= (this._cursor.offset - this._raw.byteOffset))
+    {
+      result = 0;
+    }
+    else
+    {
+      result = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
+    }
     break;
   case 24:
-    var s1 = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
-    var s2 = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset + 2);
-    result = (s1 << 8) + s2;
+    if(this._raw.byteLength <= (this._cursor.offset - this._raw.byteOffset + 2))
+    {
+      result = 0;
+    }
+    else
+    {
+      var s1 = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
+      var s2 = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset + 2);
+      result = (s1 << 8) + s2;
+    }
     break;
   case 32:
-    result = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset);
+    if(this._raw.byteLength <= (this._cursor.offset - this._raw.byteOffset))
+    {
+      result = 0;
+    }
+    else
+    {
+      result = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset);
+    }
     break;
   case 64:
-    // Warning: JavaScript cannot handle 64-bit integers natively.
-    // This will give unexpected results for integers >= 2^53
-    var s1 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset);
-    var s2 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset + 4);
-    result = (s1 * Math.pow(2,32)) + s2;
+    if(this._raw.byteLength <= (this._cursor.offset - this._raw.byteOffset + 4))
+    {
+      result = 0;
+    }
+    else
+    {
+      // Warning: JavaScript cannot handle 64-bit integers natively.
+      // This will give unexpected results for integers >= 2^53
+      var s1 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset);
+      var s2 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset + 4);
+      result = (s1 * Math.pow(2,32)) + s2;
+    }
     break;
   }
   this._cursor.offset += (size >> 3);
