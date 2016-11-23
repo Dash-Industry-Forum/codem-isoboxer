@@ -3,13 +3,13 @@ ISOBox.prototype._boxParsers['subs'] = function () {
   this._parseFullBox();
   this.entry_count = this._readUint(32);
   this.samples_with_subsamples = [];
-  var sample_nr = 0
+  var sample_nr = 0;
   for (var i = 0; i < this.entry_count; i++) {
-    var sample_delta = this._readUint(32)
+    var sample_delta = this._readUint(32);
     sample_nr += sample_delta;
     var subsample_count = this._readUint(16);
     if (subsample_count > 0) {
-      var sample = {'nr': sample_nr, 'subsamples': [] }
+      var sample = {'nr': sample_nr, 'subsamples': [] };
       for (var j = 0; j < subsample_count; j++) {
         var subsample = {};
         if (this.version & 0x1) {
@@ -25,4 +25,4 @@ ISOBox.prototype._boxParsers['subs'] = function () {
       this.samples_with_subsamples.push(sample);
     }
   }
-}
+};

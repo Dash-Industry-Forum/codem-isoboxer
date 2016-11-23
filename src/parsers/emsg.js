@@ -8,4 +8,4 @@ ISOBox.prototype._boxParsers['emsg'] = function() {
   this.event_duration          = this._readUint(32);
   this.id                      = this._readUint(32);
   this.message_data            = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
-}
+};

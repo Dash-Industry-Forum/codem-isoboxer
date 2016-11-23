@@ -7,4 +7,4 @@ ISOBox.prototype._boxParsers['mehd'] = function() {
    } else { // version==0
     this.fragment_duration = this._readUint(32);
    }
-}
+};
