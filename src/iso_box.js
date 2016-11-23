@@ -1,6 +1,6 @@
 var ISOBox = function() {
   this._cursor = new ISOBoxer.Cursor();
-}
+};
 
 ISOBox.parse = function(parent) {
   var newBox = new ISOBox();
@@ -11,7 +11,7 @@ ISOBox.parse = function(parent) {
   newBox._parseBox();
   parent._cursor.offset = newBox._raw.byteOffset + newBox._raw.byteLength;
   return newBox;
-}
+};
 
 ISOBox.prototype._readInt = function(size) {
   var result = null;
@@ -97,7 +97,7 @@ ISOBox.prototype._readData = function(size) {
   var data = new DataView(this._raw.buffer, this._cursor.offset, length);
   this._cursor.offset += length;
   return data;
-}
+};
 
 ISOBox.prototype._parseBox = function() {
   this._cursor.offset = this._offset;

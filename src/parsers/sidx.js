@@ -3,7 +3,7 @@ ISOBox.prototype._boxParsers['sidx'] = function() {
   this._parseFullBox();
   this.reference_ID = this._readUint(32);
   this.timescale = this._readUint(32);
-  if (this.version == 0) {
+  if (this.version === 0) {
     this.earliest_presentation_time = this._readUint(32);
     this.first_offset = this._readUint(32);
   } else {

@@ -1,3 +1,9 @@
+## codem-isoboxer 0.2.8 (2016/11/23) ##
+
+* Improved `avc1` and `mp4a` parsers (@bbert)
+* Fixes to `ftyp`, `styp` (@bbert)
+* Added JSHint (`npm run jshint`)
+
 ## codem-isoboxer 0.2.7 (2016/11/11) ##
 
 * Merged `subs` support (@TobbeEdgeware)

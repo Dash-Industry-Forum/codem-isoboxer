@@ -1,4 +1,4 @@
-/*! codem-isoboxer v0.2.7 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
+/*! codem-isoboxer v0.2.8 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
 var ISOBoxer = {};
 
 ISOBoxer.parseBuffer = function(arrayBuffer) {
@@ -104,7 +104,7 @@ ISOFile._sweep = function(type, result, returnEarly) {
 };;
 var ISOBox = function() {
   this._cursor = new ISOBoxer.Cursor();
-}
+};
 
 ISOBox.parse = function(parent) {
   var newBox = new ISOBox();
@@ -115,7 +115,7 @@ ISOBox.parse = function(parent) {
   newBox._parseBox();
   parent._cursor.offset = newBox._raw.byteOffset + newBox._raw.byteLength;
   return newBox;
-}
+};
 
 ISOBox.prototype._readInt = function(size) {
   var result = null;
@@ -201,7 +201,7 @@ ISOBox.prototype._readData = function(size) {
   var data = new DataView(this._raw.buffer, this._cursor.offset, length);
   this._cursor.offset += length;
   return data;
-}
+};
 
 ISOBox.prototype._parseBox = function() {
   this._cursor.offset = this._offset;
@@ -463,7 +463,7 @@ ISOBox.prototype._boxParsers['sidx'] = function() {
   this._parseFullBox();
   this.reference_ID = this._readUint(32);
   this.timescale = this._readUint(32);
-  if (this.version == 0) {
+  if (this.version === 0) {
     this.earliest_presentation_time = this._readUint(32);
     this.first_offset = this._readUint(32);
   } else {
