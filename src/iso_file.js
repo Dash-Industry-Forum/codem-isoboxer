@@ -2,18 +2,18 @@ var ISOFile = function(arrayBuffer) {
   this._raw = new DataView(arrayBuffer);
   this._cursor = new ISOBoxer.Cursor();
   this.boxes = [];
-}
+};
 
 ISOFile.prototype.fetch = function(type) {
   var result = this.fetchAll(type, true);
   return (result.length ? result[0] : null);
-}
+};
 
 ISOFile.prototype.fetchAll = function(type, returnEarly) {
   var result = [];
   ISOFile._sweep.call(this, type, result, returnEarly);
   return result;
-}
+};
 
 ISOFile.prototype.parse = function() {
   this._cursor.offset = 0;
@@ -27,7 +27,7 @@ ISOFile.prototype.parse = function() {
     this.boxes.push(box);
   }
   return this;
-}
+};
 
 ISOFile._sweep = function(type, result, returnEarly) {
   if (this.type && this.type == type) result.push(this);
@@ -35,4 +35,4 @@ ISOFile._sweep = function(type, result, returnEarly) {
     if (result.length && returnEarly) return;
     ISOFile._sweep.call(this.boxes[box], type, result, returnEarly);
   }
-}
+};

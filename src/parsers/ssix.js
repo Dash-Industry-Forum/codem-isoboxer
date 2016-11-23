@@ -8,7 +8,7 @@ ISOBox.prototype._boxParsers['ssix'] = function() {
     var subsegment = {};
     subsegment.ranges_count = this._readUint(32);
     subsegment.ranges = [];
-    
+
     for (var j=0; j<subsegment.ranges_count; j++) {
       var range = {};
       range.level = this._readUint(8);
@@ -17,4 +17,4 @@ ISOBox.prototype._boxParsers['ssix'] = function() {
     }
     this.subsegments.push(subsegment);
   }
-}
+};

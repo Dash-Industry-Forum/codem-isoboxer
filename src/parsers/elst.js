@@ -3,7 +3,7 @@ ISOBox.prototype._boxParsers['elst'] = function() {
   this._parseFullBox();
   this.entry_count = this._readUint(32);
   this.entries = [];
-  
+
   for (var i=1; i <= this.entry_count; i++) {
     var entry = {};
     if (this.version == 1) {
@@ -17,4 +17,4 @@ ISOBox.prototype._boxParsers['elst'] = function() {
     entry.media_rate_fraction = this._readInt(16);
     this.entries.push(entry);
   }
-}
+};

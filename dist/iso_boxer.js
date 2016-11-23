@@ -14,18 +14,18 @@ ISOBoxer.addBoxParser = function(type, parser) {
 
 ISOBoxer.Utils = {};
 ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
-  var impliedEncoding = encoding || 'utf-8'
+  var impliedEncoding = encoding || 'utf-8';
   if (typeof TextDecoder !== 'undefined') {
     return new TextDecoder(impliedEncoding).decode(dataView);
   }
   var a = [];
   var i = 0;
-  
+
   if (impliedEncoding === 'utf-8') {
-    /* The following algorithm is essentially a rewrite of the UTF8.decode at 
+    /* The following algorithm is essentially a rewrite of the UTF8.decode at
     http://bannister.us/weblog/2007/simple-base64-encodedecode-javascript/
     */
-  
+
     while (i < dataView.byteLength) {
       var c = dataView.getUint8(i++);
       if (c < 0x80) {
@@ -53,7 +53,7 @@ ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
       a.push(String.fromCharCode(dataView.getUint8(i++)));
     }
   }
-  return a.join('');  
+  return a.join('');
 };
 
 if (typeof exports !== 'undefined') {
@@ -63,23 +63,23 @@ if (typeof exports !== 'undefined') {
 };
 ISOBoxer.Cursor = function(initialOffset) {
   this.offset = (typeof initialOffset == 'undefined' ? 0 : initialOffset);
-};
+};;
 var ISOFile = function(arrayBuffer) {
   this._raw = new DataView(arrayBuffer);
   this._cursor = new ISOBoxer.Cursor();
   this.boxes = [];
-}
+};
 
 ISOFile.prototype.fetch = function(type) {
   var result = this.fetchAll(type, true);
   return (result.length ? result[0] : null);
-}
+};
 
 ISOFile.prototype.fetchAll = function(type, returnEarly) {
   var result = [];
   ISOFile._sweep.call(this, type, result, returnEarly);
   return result;
-}
+};
 
 ISOFile.prototype.parse = function() {
   this._cursor.offset = 0;
@@ -93,7 +93,7 @@ ISOFile.prototype.parse = function() {
     this.boxes.push(box);
   }
   return this;
-}
+};
 
 ISOFile._sweep = function(type, result, returnEarly) {
   if (this.type && this.type == type) result.push(this);
@@ -101,7 +101,7 @@ ISOFile._sweep = function(type, result, returnEarly) {
     if (result.length && returnEarly) return;
     ISOFile._sweep.call(this.boxes[box], type, result, returnEarly);
   }
-};
+};;
 var ISOBox = function() {
   this._cursor = new ISOBoxer.Cursor();
 }
@@ -138,11 +138,12 @@ ISOBox.prototype._readInt = function(size) {
     break;
   }
   this._cursor.offset += (size >> 3);
-  return result;        
-}
+  return result;
+};
 
 ISOBox.prototype._readUint = function(size) {
-  var result = null;
+  var result = null,
+      s1, s2;
   switch(size) {
   case 8:
     result = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset);
@@ -151,8 +152,8 @@ ISOBox.prototype._readUint = function(size) {
     result = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
     break;
   case 24:
-    var s1 = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
-    var s2 = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset + 2);
+    s1 = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
+    s2 = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset + 2);
     result = (s1 << 8) + s2;
     break;
   case 32:
@@ -161,14 +162,14 @@ ISOBox.prototype._readUint = function(size) {
   case 64:
     // Warning: JavaScript cannot handle 64-bit integers natively.
     // This will give unexpected results for integers >= 2^53
-    var s1 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset);
-    var s2 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset + 4);
+    s1 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset);
+    s2 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset + 4);
     result = (s1 * Math.pow(2,32)) + s2;
     break;
   }
   this._cursor.offset += (size >> 3);
-  return result;        
-}
+  return result;
+};
 
 ISOBox.prototype._readString = function(length) {
   var str = '';
@@ -176,34 +177,41 @@ ISOBox.prototype._readString = function(length) {
     var char = this._readUint(8);
     str += String.fromCharCode(char);
   }
-  return str;    
-}
+  return str;
+};
 
 ISOBox.prototype._readTerminatedString = function() {
   var str = '';
   while (this._cursor.offset - this._offset < this._raw.byteLength) {
     var char = this._readUint(8);
-    if (char == 0) break;
+    if (char === 0) break;
     str += String.fromCharCode(char);
   }
   return str;
-}
+};
 
 ISOBox.prototype._readTemplate = function(size) {
   var pre = this._readUint(size / 2);
   var post = this._readUint(size / 2);
   return pre + (post / Math.pow(2, size / 2));
+};
+
+ISOBox.prototype._readData = function(size) {
+  var length = (size > 0) ? size : (this._raw.byteLength - (this._cursor.offset - this._offset));
+  var data = new DataView(this._raw.buffer, this._cursor.offset, length);
+  this._cursor.offset += length;
+  return data;
 }
 
 ISOBox.prototype._parseBox = function() {
   this._cursor.offset = this._offset;
-  
+
   // return immediately if there are not enough bytes to read the header
   if (this._offset + 8 > this._raw.buffer.byteLength) {
     this._root._incomplete = true;
     return;
   }
-  
+
   this.size = this._readUint(32);
   this.type = this._readString(4);
 
@@ -219,7 +227,7 @@ ISOBox.prototype._parseBox = function() {
       this._incomplete = true;
       this._root._incomplete = true;
     } else {
-      this._raw = new DataView(this._raw.buffer, this._offset, this.largesize);      
+      this._raw = new DataView(this._raw.buffer, this._offset, this.largesize);
     }
     break;
   default:
@@ -227,37 +235,56 @@ ISOBox.prototype._parseBox = function() {
       this._incomplete = true;
       this._root._incomplete = true;
     } else {
-      this._raw = new DataView(this._raw.buffer, this._offset, this.size);      
+      this._raw = new DataView(this._raw.buffer, this._offset, this.size);
     }
   }
 
   // additional parsing
   if (!this._incomplete && this._boxParsers[this.type]) this._boxParsers[this.type].call(this);
-}
+};
 
 ISOBox.prototype._parseFullBox = function() {
   this.version = this._readUint(8);
   this.flags = this._readUint(24);
-}
+};
 
 ISOBox.prototype._boxParsers = {};;
 // ISO/IEC 14496-15:2014 - avc1 box
 ISOBox.prototype._boxParsers['avc1'] = function() {
-  this.version               = this._readUint(16);
-  this.revision_level        = this._readUint(16);
-  this.vendor                = this._readUint(32);
-  this.temporal_quality      = this._readUint(32);
-  this.spatial_quality       = this._readUint(32);
+  // SampleEntry fields
+  this.reserved1 = [
+    this._readUint(8),
+    this._readUint(8),
+    this._readUint(8),
+    this._readUint(8),
+    this._readUint(8),
+    this._readUint(8)
+  ];
+  this.data_reference_index = this._readUint(16);
+  // VisualSampleEntry fields
+  this.pre_defined1 = this._readUint(16);
+  this.reserved2 = this._readUint(16);
+  this.pre_defined2 = [
+    this._readUint(32),
+    this._readUint(32),
+    this._readUint(32)
+  ];
   this.width                 = this._readUint(16);
   this.height                = this._readUint(16);
-  this.horizontal_resolution = this._readUint(32);
-  this.vertical_resolution   = this._readUint(32);
-  this.data_size             = this._readUint(32);
+  this.horizresolution       = this._readTemplate(32);
+  this.vertresolution        = this._readTemplate(32);
+  this.reserved3             = this._readUint(32);
   this.frame_count           = this._readUint(16);
-  this.compressor_name       = this._readUint(32);
+  var length = this._readUint(8);
+  this.compressorname        = this._readString(length);
+  for (var i = 0; i < (31 - length); i++) {
+    this._readUint(8);
+  }
   this.depth                 = this._readUint(16);
-  this.color_table_id        = this._readUint(16);
-};
+  this.pre_defined3          = this._readInt(16);
+  // AVCSampleEntry fields
+  this.config = this._readData();
+};;
 // Simple container boxes, all from ISO/IEC 14496-12:2012 except vttc which is from 14496-30.
 [
   'moov', 'trak', 'tref', 'mdia', 'minf', 'stbl', 'edts', 'dinf',
@@ -267,16 +294,16 @@ ISOBox.prototype._boxParsers['avc1'] = function() {
     this.boxes = [];
     while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
       this.boxes.push(ISOBox.parse(this));
-    }  
-  }  
-})
+    }
+  };
+});
 ;
 // ISO/IEC 14496-12:2012 - 8.6.6 Edit List Box
 ISOBox.prototype._boxParsers['elst'] = function() {
   this._parseFullBox();
   this.entry_count = this._readUint(32);
   this.entries = [];
-  
+
   for (var i=1; i <= this.entry_count; i++) {
     var entry = {};
     if (this.version == 1) {
@@ -290,7 +317,7 @@ ISOBox.prototype._boxParsers['elst'] = function() {
     entry.media_rate_fraction = this._readInt(16);
     this.entries.push(entry);
   }
-};
+};;
 // ISO/IEC 23009-1:2014 - 5.10.3.3 Event Message Box
 ISOBox.prototype._boxParsers['emsg'] = function() {
   this._parseFullBox();
@@ -301,33 +328,33 @@ ISOBox.prototype._boxParsers['emsg'] = function() {
   this.event_duration          = this._readUint(32);
   this.id                      = this._readUint(32);
   this.message_data            = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
-};
+};;
 // ISO/IEC 14496-12:2012 - 8.1.2 Free Space Box
 ISOBox.prototype._boxParsers['free'] = ISOBox.prototype._boxParsers['skip'] = function() {
   this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
-};
+};;
 // ISO/IEC 14496-12:2012 - 4.3 File Type Box / 8.16.2 Segment Type Box
 ISOBox.prototype._boxParsers['ftyp'] = ISOBox.prototype._boxParsers['styp'] = function() {
   this.major_brand = this._readString(4);
-  this.minor_versions = this._readUint(32);
+  this.minor_version = this._readUint(32);
   this.compatible_brands = [];
-  
+
   while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
     this.compatible_brands.push(this._readString(4));
   }
-};
+};;
 // ISO/IEC 14496-12:2012 - 8.4.3 Handler Reference Box
 ISOBox.prototype._boxParsers['hdlr'] = function() {
   this._parseFullBox();
   this.pre_defined = this._readUint(32);
   this.handler_type = this._readString(4);
-  this.reserved = [this._readUint(32), this._readUint(32), this._readUint(32)]
-  this.name = this._readTerminatedString()
-};
+  this.reserved = [this._readUint(32), this._readUint(32), this._readUint(32)];
+  this.name = this._readTerminatedString();
+};;
 // ISO/IEC 14496-12:2012 - 8.1.1 Media Data Box
 ISOBox.prototype._boxParsers['mdat'] = function() {
-  this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
-};
+  this.data = this._readData();
+};;
 // ISO/IEC 14496-12:2012 - 8.4.2 Media Header Box
 ISOBox.prototype._boxParsers['mdhd'] = function() {
   this._parseFullBox();
@@ -350,7 +377,7 @@ ISOBox.prototype._boxParsers['mdhd'] = function() {
     (language & 0x1F) + 0x60
   );
   this.pre_defined = this._readUint(16);
-};
+};;
 // ISO/IEC 14496-12:2012 - 8.8.2 Movie Extends Header Box
 ISOBox.prototype._boxParsers['mehd'] = function() {
   this._parseFullBox();
@@ -360,31 +387,45 @@ ISOBox.prototype._boxParsers['mehd'] = function() {
    } else { // version==0
     this.fragment_duration = this._readUint(32);
    }
-};
+};;
 // ISO/IEC 14496-12:2012 - 8.8.5 Movie Fragment Header Box
 ISOBox.prototype._boxParsers['mfhd'] = function() {
   this._parseFullBox();
   this.sequence_number = this._readUint(32);
-};
+};;
 // ISO/IEC 14496-12:2012 - 8.8.11 Movie Fragment Random Access Box
 ISOBox.prototype._boxParsers['mfro'] = function() {
   this._parseFullBox();
   this.mfra_size = this._readUint(32); // Called mfra_size to distinguish from the normal "size" attribute of a box
-}
+};
 ;
 // ISO/IEC 14496-12:2012 - 8.5.2.2 mp4a box (use AudioSampleEntry definition and naming)
 ISOBox.prototype._boxParsers['mp4a'] = function() {
-  this.reserved1    = [this._readUint(32), this._readUint(32)];
+  // SampleEntry fields
+  this.reserved1 = [
+    this._readUint(8),
+    this._readUint(8),
+    this._readUint(8),
+    this._readUint(8),
+    this._readUint(8),
+    this._readUint(8)
+  ];
+  this.data_reference_index = this._readUint(16);
+  // AudioSampleEntry fields
+  this.reserved2    = [this._readUint(32), this._readUint(32)];
   this.channelcount = this._readUint(16);
   this.samplesize   = this._readUint(16);
   this.pre_defined  = this._readUint(16);
-  this.reserved2    = this._readUint(16);
-  this.sample_rate  = this._readUint(32);
-};
+  this.reserved3    = this._readUint(16);
+  this.samplerate   = this._readTemplate(32);
+  // ESDescriptor fields
+  this.esds = this._readData();
+};;
 // ISO/IEC 14496-12:2012 - 8.2.2 Movie Header Box
 ISOBox.prototype._boxParsers['mvhd'] = function() {
   this._parseFullBox();
-  
+  var i;
+
   if (this.version == 1) {
     this.creation_time     = this._readUint(64);
     this.modification_time = this._readUint(64);
@@ -394,28 +435,28 @@ ISOBox.prototype._boxParsers['mvhd'] = function() {
     this.creation_time     = this._readUint(32);
     this.modification_time = this._readUint(32);
     this.timescale         = this._readUint(32);
-    this.duration          = this._readUint(32);      
+    this.duration          = this._readUint(32);
   }
-  
+
   this.rate      = this._readTemplate(32);
   this.volume    = this._readTemplate(16);
   this.reserved1 = this._readUint(16);
   this.reserved2 = [ this._readUint(32), this._readUint(32) ];
   this.matrix = [];
-  for (var i=0; i<9; i++) {
+  for (i=0; i<9; i++) {
     this.matrix.push(this._readTemplate(32));
   }
   this.pre_defined = [];
-  for (var i=0; i<6; i++) {
+  for (i=0; i<6; i++) {
     this.pre_defined.push(this._readUint(32));
   }
   this.next_track_ID = this._readUint(32);
-};
+};;
 // ISO/IEC 14496-30:2014 - WebVTT Cue Payload Box.
 ISOBox.prototype._boxParsers['payl'] = function() {
   var cue_text_raw = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
   this.cue_text = ISOBoxer.Utils.dataViewToString(cue_text_raw);
-}
+};
 ;
 // ISO/IEC 14496-12:2012 - 8.16.3 Segment Index Box
 ISOBox.prototype._boxParsers['sidx'] = function() {
@@ -427,7 +468,7 @@ ISOBox.prototype._boxParsers['sidx'] = function() {
     this.first_offset = this._readUint(32);
   } else {
     this.earliest_presentation_time = this._readUint(64);
-    this.first_offset = this._readUint(64);    
+    this.first_offset = this._readUint(64);
   }
   this.reserved = this._readUint(16);
   this.reference_count = this._readUint(16);
@@ -444,7 +485,7 @@ ISOBox.prototype._boxParsers['sidx'] = function() {
     ref.SAP_delta_time = sap & 0xFFFFFFF;
     this.references.push(ref);
   }
-};
+};;
 // ISO/IEC 14496-12:2012 - 8.16.4 Subsegment Index Box
 ISOBox.prototype._boxParsers['ssix'] = function() {
   this._parseFullBox();
@@ -455,7 +496,7 @@ ISOBox.prototype._boxParsers['ssix'] = function() {
     var subsegment = {};
     subsegment.ranges_count = this._readUint(32);
     subsegment.ranges = [];
-    
+
     for (var j=0; j<subsegment.ranges_count; j++) {
       var range = {};
       range.level = this._readUint(8);
@@ -464,7 +505,7 @@ ISOBox.prototype._boxParsers['ssix'] = function() {
     }
     this.subsegments.push(subsegment);
   }
-};
+};;
 // ISO/IEC 14496-12:2012 - 8.5.2 Sample Description Box
 ISOBox.prototype._boxParsers['stsd'] = function() {
   this._parseFullBox();
@@ -474,20 +515,20 @@ ISOBox.prototype._boxParsers['stsd'] = function() {
   for (var i = 0; i < this.entry_count ; i++){
     this.entries.push(ISOBox.parse(this));
   }
-}
+};
 ;
 // ISO/IEC 14496-12:2015 - 8.7.7 Sub-Sample Information Box
 ISOBox.prototype._boxParsers['subs'] = function () {
   this._parseFullBox();
   this.entry_count = this._readUint(32);
   this.samples_with_subsamples = [];
-  var sample_nr = 0
+  var sample_nr = 0;
   for (var i = 0; i < this.entry_count; i++) {
-    var sample_delta = this._readUint(32)
+    var sample_delta = this._readUint(32);
     sample_nr += sample_delta;
     var subsample_count = this._readUint(16);
     if (subsample_count > 0) {
-      var sample = {'nr': sample_nr, 'subsamples': [] }
+      var sample = {'nr': sample_nr, 'subsamples': [] };
       for (var j = 0; j < subsample_count; j++) {
         var subsample = {};
         if (this.version & 0x1) {
@@ -503,16 +544,16 @@ ISOBox.prototype._boxParsers['subs'] = function () {
       this.samples_with_subsamples.push(sample);
     }
   }
-};
+};;
 // ISO/IEC 14496-12:2012 - 8.8.12 Track Fragmnent Decode Time
 ISOBox.prototype._boxParsers['tfdt'] = function() {
   this._parseFullBox();
   if (this.version == 1) {
     this.baseMediaDecodeTime = this._readUint(64);
   } else {
-    this.baseMediaDecodeTime = this._readUint(32);    
+    this.baseMediaDecodeTime = this._readUint(32);
   }
-};
+};;
 // ISO/IEC 14496-12:2012 - 8.8.7 Track Fragment Header Box
 ISOBox.prototype._boxParsers['tfhd'] = function() {
   this._parseFullBox();
@@ -522,7 +563,7 @@ ISOBox.prototype._boxParsers['tfhd'] = function() {
   if (this.flags & 0x8) this.default_sample_duration = this._readUint(32);
   if (this.flags & 0x10) this.default_sample_size = this._readUint(32);
   if (this.flags & 0x20) this.default_sample_flags = this._readUint(32);
-};
+};;
 // ISO/IEC 14496-12:2012 - 8.8.10 Track Fragment Random Access Box
 ISOBox.prototype._boxParsers['tfra'] = function() {
   this._parseFullBox();
@@ -556,12 +597,12 @@ ISOBox.prototype._boxParsers['tfra'] = function() {
 
     this.entries.push(entry);
   }
-}
+};
 ;
 // ISO/IEC 14496-12:2012 - 8.3.2 Track Header Box
 ISOBox.prototype._boxParsers['tkhd'] = function() {
   this._parseFullBox();
-  
+
   if (this.version == 1) {
     this.creation_time     = this._readUint(64);
     this.modification_time = this._readUint(64);
@@ -575,7 +616,7 @@ ISOBox.prototype._boxParsers['tkhd'] = function() {
     this.reserved1         = this._readUint(32);
     this.duration          = this._readUint(32);
   }
-  
+
   this.reserved2 = [
     this._readUint(32),
     this._readUint(32)
@@ -588,9 +629,9 @@ ISOBox.prototype._boxParsers['tkhd'] = function() {
   for (var i=0; i<9; i++) {
     this.matrix.push(this._readTemplate(32));
   }
-  this.width = this._readUint(32);
-  this.height = this._readUint(32);
-};
+  this.width = this._readTemplate(32);
+  this.height = this._readTemplate(32);
+};;
 // ISO/IEC 14496-12:2012 - 8.8.3 Track Extends Box
 ISOBox.prototype._boxParsers['trex'] = function() {
   this._parseFullBox();
@@ -600,7 +641,7 @@ ISOBox.prototype._boxParsers['trex'] = function() {
   this.default_sample_duration = this._readUint(32);
   this.default_sample_size = this._readUint(32);
   this.default_sample_flags = this._readUint(32);
-};
+};;
 // ISO/IEC 14496-12:2012 - 8.8.8 Track Run Box
 // Note: the 'trun' box has a direct relation to the 'tfhd' box for defaults.
 // These defaults are not set explicitly here, but are left to resolve for the user.
@@ -616,7 +657,7 @@ ISOBox.prototype._boxParsers['trun'] = function() {
     if (this.flags & 0x200) sample.sample_size = this._readUint(32);
     if (this.flags & 0x400) sample.sample_flags = this._readUint(32);
     if (this.flags & 0x800) {
-      if (this.version == 0) {
+      if (this.version === 0) {
         sample.sample_composition_time_offset = this._readUint(32);
       } else {
         sample.sample_composition_time_offset = this._readInt(32);
@@ -624,20 +665,20 @@ ISOBox.prototype._boxParsers['trun'] = function() {
     }
     this.samples.push(sample);
   }
-};
+};;
 // ISO/IEC 14496-30:2014 - WebVTT Source Label Box
 ISOBox.prototype._boxParsers['vlab'] = function() {
   var source_label_raw = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
   this.source_label = ISOBoxer.Utils.dataViewToString(source_label_raw);
-}
+};
 ;
 // ISO/IEC 14496-30:2014 - WebVTT Configuration Box
 ISOBox.prototype._boxParsers['vttC'] = function() {
   var config_raw = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
   this.config = ISOBoxer.Utils.dataViewToString(config_raw);
-}
+};
 ;
 // ISO/IEC 14496-30:2014 - WebVTT Empty Sample Box
 ISOBox.prototype._boxParsers['vtte'] = function() {
   // Nothing should happen here.
-}
+};

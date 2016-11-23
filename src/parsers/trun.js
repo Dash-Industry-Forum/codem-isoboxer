@@ -13,7 +13,7 @@ ISOBox.prototype._boxParsers['trun'] = function() {
     if (this.flags & 0x200) sample.sample_size = this._readUint(32);
     if (this.flags & 0x400) sample.sample_flags = this._readUint(32);
     if (this.flags & 0x800) {
-      if (this.version == 0) {
+      if (this.version === 0) {
         sample.sample_composition_time_offset = this._readUint(32);
       } else {
         sample.sample_composition_time_offset = this._readInt(32);
@@ -21,4 +21,4 @@ ISOBox.prototype._boxParsers['trun'] = function() {
     }
     this.samples.push(sample);
   }
-}
+};

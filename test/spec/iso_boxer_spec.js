@@ -17,7 +17,7 @@ describe('ISOBoxer', function() {
     expect(box.type).toEqual('ftyp');
     expect(box.size).toEqual(20);
     expect(box.major_brand).toEqual('isom');
-    expect(box.minor_versions).toEqual(1);
+    expect(box.minor_version).toEqual(1);
     expect(box.compatible_brands).toEqual(['isom']);
   })
   

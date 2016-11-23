@@ -4,6 +4,6 @@ ISOBox.prototype._boxParsers['tfdt'] = function() {
   if (this.version == 1) {
     this.baseMediaDecodeTime = this._readUint(64);
   } else {
-    this.baseMediaDecodeTime = this._readUint(32);    
+    this.baseMediaDecodeTime = this._readUint(32);
   }
-}
+};

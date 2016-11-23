@@ -20,4 +20,4 @@ ISOBox.prototype._boxParsers['mdhd'] = function() {
     (language & 0x1F) + 0x60
   );
   this.pre_defined = this._readUint(16);
-}
+};

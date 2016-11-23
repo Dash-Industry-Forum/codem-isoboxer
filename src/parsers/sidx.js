@@ -8,7 +8,7 @@ ISOBox.prototype._boxParsers['sidx'] = function() {
     this.first_offset = this._readUint(32);
   } else {
     this.earliest_presentation_time = this._readUint(64);
-    this.first_offset = this._readUint(64);    
+    this.first_offset = this._readUint(64);
   }
   this.reserved = this._readUint(16);
   this.reference_count = this._readUint(16);
@@ -25,4 +25,4 @@ ISOBox.prototype._boxParsers['sidx'] = function() {
     ref.SAP_delta_time = sap & 0xFFFFFFF;
     this.references.push(ref);
   }
-}
+};

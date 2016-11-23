@@ -31,4 +31,4 @@ ISOBox.prototype._boxParsers['tfra'] = function() {
 
     this.entries.push(entry);
   }
-}
+};

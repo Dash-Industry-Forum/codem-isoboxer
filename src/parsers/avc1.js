@@ -33,4 +33,4 @@ ISOBox.prototype._boxParsers['avc1'] = function() {
   this.pre_defined3          = this._readInt(16);
   // AVCSampleEntry fields
   this.config = this._readData();
-}
+};

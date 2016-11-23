@@ -19,4 +19,4 @@ ISOBox.prototype._boxParsers['mp4a'] = function() {
   this.samplerate   = this._readTemplate(32);
   // ESDescriptor fields
   this.esds = this._readData();
-}
+};

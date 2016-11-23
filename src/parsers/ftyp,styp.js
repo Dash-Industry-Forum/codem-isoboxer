@@ -7,4 +7,4 @@ ISOBox.prototype._boxParsers['ftyp'] = ISOBox.prototype._boxParsers['styp'] = fu
   while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
     this.compatible_brands.push(this._readString(4));
   }
-}
+};

@@ -7,4 +7,4 @@ ISOBox.prototype._boxParsers['trex'] = function() {
   this.default_sample_duration = this._readUint(32);
   this.default_sample_size = this._readUint(32);
   this.default_sample_flags = this._readUint(32);
-}
+};
