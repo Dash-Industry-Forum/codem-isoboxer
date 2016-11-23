@@ -136,12 +136,25 @@ ISOBox.prototype._parseBox = function() {
   }
 
   // additional parsing
-  if (!this._incomplete && this._boxParsers[this.type]) this._boxParsers[this.type].call(this);
+  if (!this._incomplete) {
+    if (this._boxContainers.indexOf(this.type) !== -1) {
+      // Container box
+      this.boxes = [];
+      while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
+        this.boxes.push(ISOBox.parse(this));
+      }
+    } else if (this._boxParsers[this.type]) {
+      // Parse box
+      this._boxParsers[this.type].call(this);
+    }
+  }
 };
 
 ISOBox.prototype._parseFullBox = function() {
   this.version = this._readUint(8);
   this.flags = this._readUint(24);
 };
+
+ISOBox.prototype._boxContainers = ['dinf', 'edts', 'mdia', 'meco', 'mfra', 'minf', 'moof', 'moov', 'mvex', 'stbl', 'strk', 'traf', 'trak', 'tref', 'udta', 'vttc'];
 
 ISOBox.prototype._boxParsers = {};
