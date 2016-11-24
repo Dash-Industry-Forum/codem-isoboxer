@@ -29,7 +29,7 @@
     "jshint": "^2.9.4"
   },
   "scripts": {
-    "test": "jasmine-node test/spec",
+    "test": "npm run grunt && jasmine-node test/spec",
     "jshint": "jshint src/*.js src/**/*.js",
     "grunt": "grunt",
     "watch": "grunt watch"
