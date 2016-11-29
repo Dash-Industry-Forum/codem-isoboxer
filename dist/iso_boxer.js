@@ -1,4 +1,4 @@
-/*! codem-isoboxer v0.2.8 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
+/*! codem-isoboxer v0.2.9 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
 var ISOBoxer = {};
 
 ISOBoxer.parseBuffer = function(arrayBuffer) {
@@ -60,10 +60,10 @@ if (typeof exports !== 'undefined') {
   exports.parseBuffer  = ISOBoxer.parseBuffer;
   exports.addBoxParser = ISOBoxer.addBoxParser;
   exports.Utils        = ISOBoxer.Utils;
-};
+}
 ISOBoxer.Cursor = function(initialOffset) {
   this.offset = (typeof initialOffset == 'undefined' ? 0 : initialOffset);
-};;
+};
 var ISOFile = function(arrayBuffer) {
   this._raw = new DataView(arrayBuffer);
   this._cursor = new ISOBoxer.Cursor();
@@ -101,7 +101,7 @@ ISOFile._sweep = function(type, result, returnEarly) {
     if (result.length && returnEarly) return;
     ISOFile._sweep.call(this.boxes[box], type, result, returnEarly);
   }
-};;
+};
 var ISOBox = function() {
   this._cursor = new ISOBoxer.Cursor();
 };
@@ -240,7 +240,13 @@ ISOBox.prototype._parseBox = function() {
   }
 
   // additional parsing
-  if (!this._incomplete && this._boxParsers[this.type]) this._boxParsers[this.type].call(this);
+  if (!this._incomplete) {
+    if (this._boxContainers.indexOf(this.type) !== -1) {
+      this._parseContainerBox();
+    } else if (this._boxParsers[this.type]) {
+      this._boxParsers[this.type].call(this);
+    }
+  }
 };
 
 ISOBox.prototype._parseFullBox = function() {
@@ -248,7 +254,16 @@ ISOBox.prototype._parseFullBox = function() {
   this.flags = this._readUint(24);
 };
 
-ISOBox.prototype._boxParsers = {};;
+ISOBox.prototype._parseContainerBox = function() {
+  this.boxes = [];
+  while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
+    this.boxes.push(ISOBox.parse(this));
+  }
+};
+
+ISOBox.prototype._boxContainers = ['dinf', 'edts', 'mdia', 'meco', 'mfra', 'minf', 'moof', 'moov', 'mvex', 'stbl', 'strk', 'traf', 'trak', 'tref', 'udta', 'vttc'];
+
+ISOBox.prototype._boxParsers = {};
 // ISO/IEC 14496-15:2014 - avc1 box
 ISOBox.prototype._boxParsers['avc1'] = function() {
   // SampleEntry fields
@@ -284,20 +299,17 @@ ISOBox.prototype._boxParsers['avc1'] = function() {
   this.pre_defined3          = this._readInt(16);
   // AVCSampleEntry fields
   this.config = this._readData();
-};;
-// Simple container boxes, all from ISO/IEC 14496-12:2012 except vttc which is from 14496-30.
-[
-  'moov', 'trak', 'tref', 'mdia', 'minf', 'stbl', 'edts', 'dinf',
-  'mvex', 'moof', 'traf', 'mfra', 'udta', 'meco', 'strk', 'vttc'
-].forEach(function(boxType) {
-  ISOBox.prototype._boxParsers[boxType] = function() {
-    this.boxes = [];
-    while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
-      this.boxes.push(ISOBox.parse(this));
-    }
-  };
-});
-;
+};
+// ISO/IEC 14496-12:2012 - 8.7.2 Data Reference Box
+ISOBox.prototype._boxParsers['dref'] = function() {
+  this._parseFullBox();
+  this.entry_count = this._readUint(32);
+  this.entries = [];
+  for (var i = 0; i < this.entry_count ; i++){
+    this.entries.push(ISOBox.parse(this));
+  }
+};
+
 // ISO/IEC 14496-12:2012 - 8.6.6 Edit List Box
 ISOBox.prototype._boxParsers['elst'] = function() {
   this._parseFullBox();
@@ -317,7 +329,7 @@ ISOBox.prototype._boxParsers['elst'] = function() {
     entry.media_rate_fraction = this._readInt(16);
     this.entries.push(entry);
   }
-};;
+};
 // ISO/IEC 23009-1:2014 - 5.10.3.3 Event Message Box
 ISOBox.prototype._boxParsers['emsg'] = function() {
   this._parseFullBox();
@@ -328,11 +340,11 @@ ISOBox.prototype._boxParsers['emsg'] = function() {
   this.event_duration          = this._readUint(32);
   this.id                      = this._readUint(32);
   this.message_data            = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.1.2 Free Space Box
 ISOBox.prototype._boxParsers['free'] = ISOBox.prototype._boxParsers['skip'] = function() {
   this.data = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
-};;
+};
 // ISO/IEC 14496-12:2012 - 4.3 File Type Box / 8.16.2 Segment Type Box
 ISOBox.prototype._boxParsers['ftyp'] = ISOBox.prototype._boxParsers['styp'] = function() {
   this.major_brand = this._readString(4);
@@ -342,7 +354,7 @@ ISOBox.prototype._boxParsers['ftyp'] = ISOBox.prototype._boxParsers['styp'] = fu
   while (this._cursor.offset - this._raw.byteOffset < this._raw.byteLength) {
     this.compatible_brands.push(this._readString(4));
   }
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.4.3 Handler Reference Box
 ISOBox.prototype._boxParsers['hdlr'] = function() {
   this._parseFullBox();
@@ -350,11 +362,11 @@ ISOBox.prototype._boxParsers['hdlr'] = function() {
   this.handler_type = this._readString(4);
   this.reserved = [this._readUint(32), this._readUint(32), this._readUint(32)];
   this.name = this._readTerminatedString();
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.1.1 Media Data Box
 ISOBox.prototype._boxParsers['mdat'] = function() {
   this.data = this._readData();
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.4.2 Media Header Box
 ISOBox.prototype._boxParsers['mdhd'] = function() {
   this._parseFullBox();
@@ -377,7 +389,7 @@ ISOBox.prototype._boxParsers['mdhd'] = function() {
     (language & 0x1F) + 0x60
   );
   this.pre_defined = this._readUint(16);
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.8.2 Movie Extends Header Box
 ISOBox.prototype._boxParsers['mehd'] = function() {
   this._parseFullBox();
@@ -387,18 +399,18 @@ ISOBox.prototype._boxParsers['mehd'] = function() {
    } else { // version==0
     this.fragment_duration = this._readUint(32);
    }
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.8.5 Movie Fragment Header Box
 ISOBox.prototype._boxParsers['mfhd'] = function() {
   this._parseFullBox();
   this.sequence_number = this._readUint(32);
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.8.11 Movie Fragment Random Access Box
 ISOBox.prototype._boxParsers['mfro'] = function() {
   this._parseFullBox();
   this.mfra_size = this._readUint(32); // Called mfra_size to distinguish from the normal "size" attribute of a box
 };
-;
+
 // ISO/IEC 14496-12:2012 - 8.5.2.2 mp4a box (use AudioSampleEntry definition and naming)
 ISOBox.prototype._boxParsers['mp4a'] = function() {
   // SampleEntry fields
@@ -420,7 +432,7 @@ ISOBox.prototype._boxParsers['mp4a'] = function() {
   this.samplerate   = this._readTemplate(32);
   // ESDescriptor fields
   this.esds = this._readData();
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.2.2 Movie Header Box
 ISOBox.prototype._boxParsers['mvhd'] = function() {
   this._parseFullBox();
@@ -451,13 +463,13 @@ ISOBox.prototype._boxParsers['mvhd'] = function() {
     this.pre_defined.push(this._readUint(32));
   }
   this.next_track_ID = this._readUint(32);
-};;
+};
 // ISO/IEC 14496-30:2014 - WebVTT Cue Payload Box.
 ISOBox.prototype._boxParsers['payl'] = function() {
   var cue_text_raw = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
   this.cue_text = ISOBoxer.Utils.dataViewToString(cue_text_raw);
 };
-;
+
 // ISO/IEC 14496-12:2012 - 8.16.3 Segment Index Box
 ISOBox.prototype._boxParsers['sidx'] = function() {
   this._parseFullBox();
@@ -485,7 +497,15 @@ ISOBox.prototype._boxParsers['sidx'] = function() {
     ref.SAP_delta_time = sap & 0xFFFFFFF;
     this.references.push(ref);
   }
-};;
+};
+// ISO/IEC 14496-12:2012 - 8.4.5.3 Sound Media Header Box
+ISOBox.prototype._boxParsers['smhd'] = function() {
+  this._parseFullBox();
+
+  this.balance = this._readTemplate(16);
+  this.reserved = this._readUint(16);
+};
+
 // ISO/IEC 14496-12:2012 - 8.16.4 Subsegment Index Box
 ISOBox.prototype._boxParsers['ssix'] = function() {
   this._parseFullBox();
@@ -505,7 +525,7 @@ ISOBox.prototype._boxParsers['ssix'] = function() {
     }
     this.subsegments.push(subsegment);
   }
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.5.2 Sample Description Box
 ISOBox.prototype._boxParsers['stsd'] = function() {
   this._parseFullBox();
@@ -516,7 +536,7 @@ ISOBox.prototype._boxParsers['stsd'] = function() {
     this.entries.push(ISOBox.parse(this));
   }
 };
-;
+
 // ISO/IEC 14496-12:2015 - 8.7.7 Sub-Sample Information Box
 ISOBox.prototype._boxParsers['subs'] = function () {
   this._parseFullBox();
@@ -544,7 +564,7 @@ ISOBox.prototype._boxParsers['subs'] = function () {
       this.samples_with_subsamples.push(sample);
     }
   }
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.8.12 Track Fragmnent Decode Time
 ISOBox.prototype._boxParsers['tfdt'] = function() {
   this._parseFullBox();
@@ -553,7 +573,7 @@ ISOBox.prototype._boxParsers['tfdt'] = function() {
   } else {
     this.baseMediaDecodeTime = this._readUint(32);
   }
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.8.7 Track Fragment Header Box
 ISOBox.prototype._boxParsers['tfhd'] = function() {
   this._parseFullBox();
@@ -563,7 +583,7 @@ ISOBox.prototype._boxParsers['tfhd'] = function() {
   if (this.flags & 0x8) this.default_sample_duration = this._readUint(32);
   if (this.flags & 0x10) this.default_sample_size = this._readUint(32);
   if (this.flags & 0x20) this.default_sample_flags = this._readUint(32);
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.8.10 Track Fragment Random Access Box
 ISOBox.prototype._boxParsers['tfra'] = function() {
   this._parseFullBox();
@@ -598,7 +618,7 @@ ISOBox.prototype._boxParsers['tfra'] = function() {
     this.entries.push(entry);
   }
 };
-;
+
 // ISO/IEC 14496-12:2012 - 8.3.2 Track Header Box
 ISOBox.prototype._boxParsers['tkhd'] = function() {
   this._parseFullBox();
@@ -631,7 +651,7 @@ ISOBox.prototype._boxParsers['tkhd'] = function() {
   }
   this.width = this._readTemplate(32);
   this.height = this._readTemplate(32);
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.8.3 Track Extends Box
 ISOBox.prototype._boxParsers['trex'] = function() {
   this._parseFullBox();
@@ -641,7 +661,7 @@ ISOBox.prototype._boxParsers['trex'] = function() {
   this.default_sample_duration = this._readUint(32);
   this.default_sample_size = this._readUint(32);
   this.default_sample_flags = this._readUint(32);
-};;
+};
 // ISO/IEC 14496-12:2012 - 8.8.8 Track Run Box
 // Note: the 'trun' box has a direct relation to the 'tfhd' box for defaults.
 // These defaults are not set explicitly here, but are left to resolve for the user.
@@ -665,19 +685,36 @@ ISOBox.prototype._boxParsers['trun'] = function() {
     }
     this.samples.push(sample);
   }
-};;
+};
+// ISO/IEC 14496-12:2012 - 8.7.2 Data Reference Box
+ISOBox.prototype._boxParsers['url '] = ISOBox.prototype._boxParsers['urn '] = function() {
+  this._parseFullBox();
+  if (this.type === 'urn ') {
+    this.name = this._readTerminatedString();
+  }
+  this.location = this._readTerminatedString();
+};
+
 // ISO/IEC 14496-30:2014 - WebVTT Source Label Box
 ISOBox.prototype._boxParsers['vlab'] = function() {
   var source_label_raw = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
   this.source_label = ISOBoxer.Utils.dataViewToString(source_label_raw);
 };
-;
+
+// ISO/IEC 14496-12:2012 - 8.4.5.2 Video Media Header Box
+ISOBox.prototype._boxParsers['vmhd'] = function() {
+  this._parseFullBox();
+
+  this.graphicsmode = this._readUint(16);
+  this.opcolor = [this._readUint(16), this._readUint(16), this._readUint(16)];
+};
+
 // ISO/IEC 14496-30:2014 - WebVTT Configuration Box
 ISOBox.prototype._boxParsers['vttC'] = function() {
   var config_raw = new DataView(this._raw.buffer, this._cursor.offset, this._raw.byteLength - (this._cursor.offset - this._offset));
   this.config = ISOBoxer.Utils.dataViewToString(config_raw);
 };
-;
+
 // ISO/IEC 14496-30:2014 - WebVTT Empty Sample Box
 ISOBox.prototype._boxParsers['vtte'] = function() {
   // Nothing should happen here.
