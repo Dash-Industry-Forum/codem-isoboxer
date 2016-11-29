@@ -1,3 +1,7 @@
+## codem-isoboxer 0.2.9 (2016/11/29) ##
+
+* `dref`, `url `, `urn `, `smhd` parsing (@bbert)
+
 ## codem-isoboxer 0.2.8 (2016/11/23) ##
 
 * Improved `avc1` and `mp4a` parsers (@bbert)
