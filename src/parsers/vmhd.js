@@ -3,8 +3,5 @@ ISOBox.prototype._boxParsers['vmhd'] = function() {
   this._parseFullBox();
 
   this.graphicsmode = this._readUint(16);
-  this.opcolor = [];
-  for (var i=0; i<3; i++) {
-    this.opcolor.push(this._readUint(16));
-  }
+  this.opcolor = [this._readUint(16), this._readUint(16), this._readUint(16)];
 };
