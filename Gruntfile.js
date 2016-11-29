@@ -44,7 +44,7 @@ module.exports = function(grunt) {
     concat: {
       options: {
         banner: banner,
-        separator: ';\n'
+        separator: '\n'
       },
       dist: {
         src: getSourceFiles(),
