@@ -258,13 +258,14 @@ describe('Text samples', function() {
       var boxes = parsedFile.fetchAll('subs');
       expect(boxes.length).toEqual(1);
       expect(boxes[0].type).toEqual('subs');
-      expect(boxes[0].samples_with_subsamples.length).toEqual(1);
-      var sample = boxes[0].samples_with_subsamples[0];
-      expect(sample.nr).toEqual(1);
-      expect(sample.subsamples.length).toEqual(3);
-      expect(sample.subsamples[0].size).toEqual(5);
-      expect(sample.subsamples[1].size).toEqual(6);
-      expect(sample.subsamples[2].size).toEqual(5);
+      expect(boxes[0].entries.length).toEqual(1);
+      expect(boxes[0].entries[0].sample_delta).toEqual(1);
+      expect(boxes[0].entries[0].subsample_count).toEqual(3);
+      expect(boxes[0].entries[0].subsamples.length).toEqual(3);
+      expect(boxes[0].entries[0].subsamples[0].subsample_size).toEqual(5);
+      expect(boxes[0].entries[0].subsamples[0].subsample_priority).toEqual(0);
+      expect(boxes[0].entries[0].subsamples[0].discardable).toEqual(0);
+      expect(boxes[0].entries[0].subsamples[0].reserved).toEqual(0);
     })
   })
 
