@@ -17,7 +17,7 @@ ISOBox.prototype._boxParsers['subs'] = function () {
             }
             subsample.subsample_priority = this._readUint(8);
             subsample.discardable = this._readUint(8);
-            subsample.reserved = this._readUint(32);
+            subsample.codec_specific_parameters = this._readUint(32);
             entry.subsamples.push(subsample);
         }
         this.entries.push(entry);
