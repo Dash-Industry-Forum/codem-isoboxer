@@ -235,7 +235,7 @@ describe('Text samples', function() {
 
       var box = parsedBuffer.boxes[0].boxes[0];
       expect(box.type).toEqual('payl');
-      expect(box.cue_text).toEqual("You're a jerk, Thom.\n")
+      expect(box.cue_text).toEqual("You're a jerk, Thom.\n");
     })
   })
 
@@ -265,7 +265,7 @@ describe('Text samples', function() {
       expect(boxes[0].entries[0].subsamples[0].subsample_size).toEqual(5);
       expect(boxes[0].entries[0].subsamples[0].subsample_priority).toEqual(0);
       expect(boxes[0].entries[0].subsamples[0].discardable).toEqual(0);
-      expect(boxes[0].entries[0].subsamples[0].reserved).toEqual(0);
+      expect(boxes[0].entries[0].subsamples[0].codec_specific_parameters).toEqual(0);
     })
   })
 
