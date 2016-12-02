@@ -13,6 +13,17 @@ ISOBox.parse = function(parent) {
   return newBox;
 };
 
+ISOBox.create = function(type, parent) {
+  var newBox = new ISOBox();
+  newBox.type = type;
+  newBox.boxes = [];
+  newBox._offset = parent._cursor.offset;
+  newBox._root = (parent._root ? parent._root : parent);
+  newBox._raw = parent._raw;
+  newBox._parent = parent;
+  return newBox;
+};
+
 ISOBox.prototype._readInt = function(size) {
   var result = null;
   switch(size) {
