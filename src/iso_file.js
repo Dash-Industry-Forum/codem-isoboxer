@@ -1,7 +1,9 @@
 var ISOFile = function(arrayBuffer) {
-  this._raw = new DataView(arrayBuffer);
   this._cursor = new ISOBoxer.Cursor();
   this.boxes = [];
+  if (arrayBuffer) {
+    this._raw = new DataView(arrayBuffer);
+  }
 };
 
 ISOFile.prototype.fetch = function(type) {
