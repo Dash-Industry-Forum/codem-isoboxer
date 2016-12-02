@@ -11,6 +11,41 @@ ISOBoxer.addBoxParser = function(type, parser) {
   ISOBox.prototype._boxParsers[type] = parser;
 };
 
+// @ifdef WRITE
+ISOBoxer.createFile = function() {
+  return new ISOFile();
+};
+
+ISOBoxer.createBox = function(type, parent, previousType) {
+
+  var newBox = ISOBox.create(type, parent),
+      inserted = false;
+
+  if (previousType) {
+    for (var i = 0; i < parent.boxes.length; i++) {
+      if (previousType === parent.boxes[i].type) {
+        parent.boxes.splice(i + 1, 0, newBox);
+        inserted = true;
+        break;
+      }
+    }
+  }
+
+  if (!inserted) {
+    parent.boxes.push(newBox);
+  }
+
+  return newBox;
+};
+
+ISOBoxer.createFullBox = function(type, parent, previousType) {
+  var newBox = ISOBoxer.createBox(type, parent, previousType);
+  newBox.version = 0;
+  newBox.flags = 0;
+  return newBox;
+};
+// @endif
+
 ISOBoxer.Utils = {};
 ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
   var impliedEncoding = encoding || 'utf-8';
