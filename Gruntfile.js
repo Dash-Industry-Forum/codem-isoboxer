@@ -17,24 +17,24 @@ module.exports = function(grunt) {
   function getSourceFiles() {
     var defaultList = ['src/iso_boxer.js', 'src/cursor.js', 'src/iso_file.js', 'src/iso_box.js'];
     if (!boxes) {
-      return defaultList.concat(['src/parsers/*.js']);
+      return defaultList.concat(['src/boxes/*.js']);
     }
-    var parsers = grunt.file.expand('src/parsers/*.js');
+    var processors = grunt.file.expand('src/boxes/*.js');
     var boxList = boxes.split(',');
     var files = [];
     boxList.forEach(function(box) {
-      var parser = getBoxParserForBox(parsers, box);
+      var parser = getBoxParserForBox(processors, box);
       if (parser && files.indexOf(parser) == -1) files.push(parser);
-    })
+    });
     return defaultList.concat(files);
   }
-  
-  function getBoxParserForBox(parsers, box) {
+
+  function getBoxParserForBox(processors, box) {
     var result;
-    parsers.forEach(function(parser) {
-      var providers = parser.split('/').pop().replace('.js', '').split(',')
+    processors.forEach(function(parser) {
+      var providers = parser.split('/').pop().replace('.js', '').split(',');
       if (providers.indexOf(box) != -1) result = parser;
-    })
+    });
     return result;
   }
   
