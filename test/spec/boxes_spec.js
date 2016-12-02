@@ -158,7 +158,10 @@ describe('avc1 box', function() {
     expect(box.vertresolution).toEqual(72);
     expect(box.reserved3).toEqual(0);
     expect(box.frame_count).toEqual(1);
-    expect(box.compressorname).toEqual('GoPro AVC encoder');
+    expect(box.compressorname).toEqual([0x11, 0x47, 0x6F, 0x50, 0x72, 0x6F, 0x20, 0x41,
+                                        0x56, 0x43, 0x20, 0x65, 0x6E, 0x63, 0x6F, 0x64,
+                                        0x65, 0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]); // length + 'GoPro AVC encoder'
     expect(box.depth).toEqual(24);
     expect(box.pre_defined3).toEqual(-1);
     expect(box.config.byteLength).toEqual(98);
