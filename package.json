@@ -27,6 +27,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-preprocess": "^5.1.0",
     "jasmine-node": "^1.14.5",
+    "arraybuffer-equal": "^1.0.4",
     "jshint": "^2.9.4"
   },
   "scripts": {
