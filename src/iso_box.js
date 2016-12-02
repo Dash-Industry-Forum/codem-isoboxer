@@ -242,6 +242,11 @@ ISOBox.prototype._readData = function(size) {
   return data;
 };
 
+ISOBox.prototype._readUTF8String = function() {
+  var data = this._readData();
+  return ISOBoxer.Utils.dataViewToString(data);
+};
+
 ISOBox.prototype._parseBox = function() {
   this._parsing = true;
   this._cursor.offset = this._offset;
