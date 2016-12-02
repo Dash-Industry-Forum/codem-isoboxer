@@ -90,6 +90,37 @@ ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
   return a.join('');
 };
 
+// @ifdef WRITE
+ISOBoxer.Utils.utf8ToByteArray = function(string) {
+  // Only UTF-8 encoding is supported by TextEncoder
+  var u, i;
+  if (typeof TextEncoder !== 'undefined') {
+    u = new TextEncoder().encode(string);
+  } else {
+    u = [];
+    for (i = 0; i < string.length; ++i) {
+      var c = string.charCodeAt(i);
+      if (c < 0x80) {
+        u.push(c);
+      } else if (c < 0x800) {
+        u.push(0xC0 | (c >> 6));
+        u.push(0x80 | (63 & c));
+      } else if (c < 0x10000) {
+        u.push(0xE0 | (c >> 12));
+        u.push(0x80 | (63 & (c >> 6)));
+        u.push(0x80 | (63 & c));
+      } else {
+        u.push(0xF0 | (c >> 18));
+        u.push(0x80 | (63 & (c >> 12)));
+        u.push(0x80 | (63 & (c >> 6)));
+        u.push(0x80 | (63 & c));
+      }
+    }
+  }
+  return u;
+};
+// @endif
+
 if (typeof exports !== 'undefined') {
   exports.parseBuffer     = ISOBoxer.parseBuffer;
   exports.addBoxProcessor = ISOBoxer.addBoxProcessor;
