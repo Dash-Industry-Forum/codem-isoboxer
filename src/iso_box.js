@@ -304,4 +304,213 @@ ISOBox.prototype._parseContainerBox = function() {
   }
 };
 
+// @ifdef WRITE
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Write functions
 
+ISOBox.prototype.getLength = function() {
+  this._parsing = false;
+  this._rawo = null;
+
+  this.size = 0;
+  this._procField('size', 'uint', 32);
+  this._procField('type', 'string', 4);
+
+  if (this.size === 1)      { this._procField('largesize', 'uint', 64); }
+  if (this.type === 'uuid') { this._procFieldArray('usertype', 16, 'uint', 8); }
+
+  if (this._boxContainers.indexOf(this.type) !== -1) {
+    for (var i = 0; i < this.boxes.length; i++) {
+      this.size += this.boxes[i].getLength();
+    }
+  } else if (this._boxProcessors[this.type]) {
+    this._boxProcessors[this.type].call(this);
+  } else if (this._data) {
+    this.size += this._data.byteLength;
+  }
+
+  return this.size;
+};
+
+ISOBox.prototype.write = function() {
+  this._parsing = false;
+  this._cursor.offset = this._parent._cursor.offset;
+
+  switch(this.size) {
+  case 0:
+    this._rawo = new DataView(this._parent._rawo.buffer, this._cursor.offset, (this.parent._rawo.byteLength - this._cursor.offset));
+    break;
+  case 1:
+      this._rawo = new DataView(this._parent._rawo.buffer, this._cursor.offset, this.largesize);
+    break;
+  default:
+      this._rawo = new DataView(this._parent._rawo.buffer, this._cursor.offset, this.size);
+  }
+
+  this._procField('size', 'uint', 32);
+  this._procField('type', 'string', 4);
+
+  if (this.size === 1)      { this._procField('largesize', 'uint', 64); }
+  if (this.type === 'uuid') { this._procFieldArray('usertype', 16, 'uint', 8); }
+
+  if (this._boxContainers.indexOf(this.type) !== -1) {
+    for (var i = 0; i < this.boxes.length; i++) {
+      this.boxes[i].write();
+    }
+  } else if (this._boxProcessors[this.type]) {
+    this._boxProcessors[this.type].call(this);
+  } else if (this._data) {
+    this._writeData(this._data);
+  }
+
+  this._parent._cursor.offset += this.size;
+
+  return this.size;
+};
+
+ISOBox.prototype._writeInt = function(size, value) {
+  if (this._rawo) {
+    var offset = this._cursor.offset - this._rawo.byteOffset;
+    switch(size) {
+    case 8:
+      this._rawo.setInt8(offset, value);
+      break;
+    case 16:
+      this._rawo.setInt16(offset, value);
+      break;
+    case 32:
+      this._rawo.setInt32(offset, value);
+      break;
+    case 64:
+      // Warning: JavaScript cannot handle 64-bit integers natively.
+      // This will give unexpected results for integers >= 2^53
+      var s1 = Math.round(value / Math.pow(2,32));
+      var s2 = value - (s1 * Math.pow(2,32));
+      this._rawo.setUint32(offset, s1);
+      this._rawo.setUint32(offset + 4, s2);
+      break;
+    }
+    this._cursor.offset += (size >> 3);
+  } else {
+    this.size += (size >> 3);
+  }
+};
+
+ISOBox.prototype._writeUint = function(size, value) {
+
+  if (this._rawo) {
+    var offset = this._cursor.offset - this._rawo.byteOffset,
+        s1, s2;
+    switch(size) {
+    case 8:
+      this._rawo.setUint8(offset, value);
+      break;
+    case 16:
+      this._rawo.setUint16(offset, value);
+      break;
+    case 24:
+      s1 = (value & 0xFFFF00) >> 8;
+      s2 = (value & 0x0000FF);
+      this._rawo.setUint16(offset, s1);
+      this._rawo.setUint8(offset + 2, s2);
+      break;
+    case 32:
+      this._rawo.setUint32(offset, value);
+      break;
+    case 64:
+      // Warning: JavaScript cannot handle 64-bit integers natively.
+      // This will give unexpected results for integers >= 2^53
+      s1 = Math.round(value / Math.pow(2,32));
+      s2 = value - (s1 * Math.pow(2,32));
+      this._rawo.setUint32(offset, s1);
+      this._rawo.setUint32(offset + 4, s2);
+      break;
+    }
+    this._cursor.offset += (size >> 3);
+  } else {
+    this.size += (size >> 3);
+  }
+};
+
+ISOBox.prototype._writeString = function(size, str) {
+  for (var c = 0; c < size; c++) {
+    this._writeUint(8, str.charCodeAt(c));
+  }
+};
+
+ISOBox.prototype._writeTerminatedString = function(str) {
+  if (str.length === 0) {
+    return;
+  }
+  for (var c = 0; c < str.length; c++) {
+    this._writeUint(8, str.charCodeAt(c));
+  }
+  this._writeUint(8, 0);
+};
+
+ISOBox.prototype._writeTemplate = function(size, value) {
+  var pre = Math.round(value);
+  var post = (value - pre) * Math.pow(2, size / 2);
+  this._writeUint(size / 2, pre);
+  this._writeUint(size / 2, post);
+};
+
+ISOBox.prototype._writeData = function(data) {
+  if (data instanceof Array) {
+    data = new DataView(Uint8Array.from(data).buffer);
+  }
+  if (data instanceof Uint8Array) {
+    data = new DataView(data.buffer);
+  }
+  if (this._rawo) {
+    var offset = this._cursor.offset - this._rawo.byteOffset;
+    for (var i = 0; i < data.byteLength; i++) {
+        this._rawo.setUint8(offset + i, data.getUint8(i));
+    }
+    this._cursor.offset += data.byteLength;
+  } else {
+    this.size += data.byteLength;
+  }
+};
+
+ISOBox.prototype._writeUTF8String = function(string) {
+  var u = ISOBoxer.Utils.utf8ToByteArray(string);
+  if (this._rawo) {
+    var dataView = new DataView(this._rawo.buffer, this._cursor.offset, u.length);
+    for (var i = 0; i < u.length; i++) {
+      dataView.setUint8(i, u[i]);
+    }
+  } else {
+    this.size += u.length;
+  }
+};
+
+ISOBox.prototype._writeField = function(type, size, value) {
+  switch (type) {
+  case 'uint':
+    this._writeUint(size, value);
+    break;
+  case 'int':
+    this._writeInt(size, value);
+    break;
+  case 'template':
+    this._writeTemplate(size, value);
+    break;
+  case 'string':
+      if (size == -1) {
+        this._writeTerminatedString(value);
+      } else {
+        this._writeString(size, value);
+      }
+      break;
+  case 'data':
+    this._writeData(value);
+    break;
+  case 'utf8':
+    this._writeUTF8String(value);
+    break;
+  default:
+    break;
+  }
+};
+// @endif
