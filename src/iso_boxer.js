@@ -16,10 +16,14 @@ ISOBoxer.createFile = function() {
   return new ISOFile();
 };
 
-ISOBoxer.createBox = function(type, parent, previousType) {
+ISOBoxer.createBox = function(type, parent, append, previousType) {
 
   var newBox = ISOBox.create(type, parent),
       inserted = false;
+
+  if (append === false) {
+    return newBox;
+  }
 
   if (previousType) {
     for (var i = 0; i < parent.boxes.length; i++) {
@@ -38,8 +42,8 @@ ISOBoxer.createBox = function(type, parent, previousType) {
   return newBox;
 };
 
-ISOBoxer.createFullBox = function(type, parent, previousType) {
-  var newBox = ISOBoxer.createBox(type, parent, previousType);
+ISOBoxer.createFullBox = function(type, parent, append, previousType) {
+  var newBox = ISOBoxer.createBox(type, parent, append, previousType);
   newBox.version = 0;
   newBox.flags = 0;
   return newBox;
