@@ -91,7 +91,12 @@ ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
 };
 
 if (typeof exports !== 'undefined') {
-  exports.parseBuffer  = ISOBoxer.parseBuffer;
-  exports.addBoxParser = ISOBoxer.addBoxParser;
-  exports.Utils        = ISOBoxer.Utils;
+  exports.parseBuffer     = ISOBoxer.parseBuffer;
+  exports.addBoxProcessor = ISOBoxer.addBoxProcessor;
+  // @ifdef WRITE
+  exports.createFile      = ISOBoxer.createFile;
+  exports.createBox       = ISOBoxer.createBox;
+  exports.createFullBox   = ISOBoxer.createFullBox;
+  // @endif
+  exports.Utils           = ISOBoxer.Utils;
 }
