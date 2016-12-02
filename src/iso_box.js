@@ -151,22 +151,23 @@ ISOBox.prototype._readField = function(type, size) {
 };
 
 ISOBox.prototype._readInt = function(size) {
-  var result = null;
+  var result = null,
+      offset = this._cursor.offset - this._raw.byteOffset;
   switch(size) {
   case 8:
-    result = this._raw.getInt8(this._cursor.offset - this._raw.byteOffset);
+    result = this._raw.getInt8(offset);
     break;
   case 16:
-    result = this._raw.getInt16(this._cursor.offset - this._raw.byteOffset);
+    result = this._raw.getInt16(offset);
     break;
   case 32:
-    result = this._raw.getInt32(this._cursor.offset - this._raw.byteOffset);
+    result = this._raw.getInt32(offset);
     break;
   case 64:
     // Warning: JavaScript cannot handle 64-bit integers natively.
     // This will give unexpected results for integers >= 2^53
-    var s1 = this._raw.getInt32(this._cursor.offset - this._raw.byteOffset);
-    var s2 = this._raw.getInt32(this._cursor.offset - this._raw.byteOffset + 4);
+    var s1 = this._raw.getInt32(offset);
+    var s2 = this._raw.getInt32(offset + 4);
     result = (s1 * Math.pow(2,32)) + s2;
     break;
   }
@@ -176,27 +177,28 @@ ISOBox.prototype._readInt = function(size) {
 
 ISOBox.prototype._readUint = function(size) {
   var result = null,
+      offset = this._cursor.offset - this._raw.byteOffset,
       s1, s2;
   switch(size) {
   case 8:
-    result = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset);
+    result = this._raw.getUint8(offset);
     break;
   case 16:
-    result = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
+    result = this._raw.getUint16(offset);
     break;
   case 24:
-    s1 = this._raw.getUint16(this._cursor.offset - this._raw.byteOffset);
-    s2 = this._raw.getUint8(this._cursor.offset - this._raw.byteOffset + 2);
+    s1 = this._raw.getUint16(offset);
+    s2 = this._raw.getUint8(offset + 2);
     result = (s1 << 8) + s2;
     break;
   case 32:
-    result = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset);
+    result = this._raw.getUint32(offset);
     break;
   case 64:
     // Warning: JavaScript cannot handle 64-bit integers natively.
     // This will give unexpected results for integers >= 2^53
-    s1 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset);
-    s2 = this._raw.getUint32(this._cursor.offset - this._raw.byteOffset + 4);
+    s1 = this._raw.getUint32(offset);
+    s2 = this._raw.getUint32(offset + 4);
     result = (s1 * Math.pow(2,32)) + s2;
     break;
   }
@@ -213,6 +215,12 @@ ISOBox.prototype._readString = function(length) {
   return str;
 };
 
+ISOBox.prototype._readTemplate = function(size) {
+  var pre = this._readUint(size / 2);
+  var post = this._readUint(size / 2);
+  return pre + (post / Math.pow(2, size / 2));
+};
+
 ISOBox.prototype._readTerminatedString = function() {
   var str = '';
   while (this._cursor.offset - this._offset < this._raw.byteLength) {
@@ -221,12 +229,6 @@ ISOBox.prototype._readTerminatedString = function() {
     str += String.fromCharCode(char);
   }
   return str;
-};
-
-ISOBox.prototype._readTemplate = function(size) {
-  var pre = this._readUint(size / 2);
-  var post = this._readUint(size / 2);
-  return pre + (post / Math.pow(2, size / 2));
 };
 
 ISOBox.prototype._readData = function(size) {
