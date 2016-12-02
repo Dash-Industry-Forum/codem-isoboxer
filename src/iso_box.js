@@ -24,6 +24,110 @@ ISOBox.create = function(type, parent) {
   return newBox;
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Generic read/write functions
+
+ISOBox.prototype._procField = function (name, type, size) {
+  if (this._parsing) {
+    this[name] = this._readField(type, size);
+  }
+  // @ifdef WRITE
+  else {
+    this._writeField(type, size, this[name]);
+  }
+  // @endif
+};
+
+ISOBox.prototype._procFieldArray = function (name, length, type, size) {
+  var i;
+  if (this._parsing) {
+    this[name] = [];
+    for (i = 0; i < length; i++) {
+      this[name][i] = this._readField(type, size);
+    }
+  }
+  // @ifdef WRITE
+  else {
+    for (i = 0; i < this[name].length; i++) {
+      this._writeField(type, size, this[name][i]);
+    }
+  }
+  // @endif
+};
+
+ISOBox.prototype._procFullBox = function() {
+  this._procField('version', 'uint', 8);
+  this._procField('flags', 'uint', 24);
+};
+
+ISOBox.prototype._procEntries = function(name, length, fn) {
+  var i;
+  if (this._parsing) {
+    this[name] = [];
+    for (i = 0; i < length; i++) {
+      this[name].push({});
+      fn.call(this, this[name][i]);
+    }
+  }
+  // @ifdef WRITE
+  else {
+    for (i = 0; i < length; i++) {
+      fn.call(this, this[name][i]);
+    }
+  }
+  // @endif
+};
+
+ISOBox.prototype._procSubEntries = function(entry, name, length, fn) {
+  var i;
+  if (this._parsing) {
+    entry[name] = [];
+    for (i = 0; i < length; i++) {
+      entry[name].push({});
+      fn.call(this, entry[name][i]);
+    }
+  }
+  // @ifdef WRITE
+  else {
+    for (i = 0; i < length; i++) {
+      fn.call(this, entry[name][i]);
+    }
+  }
+  // @endif
+};
+
+ISOBox.prototype._procEntryField = function (entry, name, type, size) {
+  if (this._parsing) {
+    entry[name] = this._readField(type, size);
+  }
+  // @ifdef WRITE
+  else {
+    this._writeField(type, size, entry[name]);
+  }
+  // @endif
+};
+
+ISOBox.prototype._procSubBoxes = function(name, length) {
+  var i;
+  if (this._parsing) {
+    this[name] = [];
+    for (i = 0; i < length; i++) {
+      this[name].push(ISOBox.parse(this));
+    }
+  }
+  // @ifdef WRITE
+  else {
+    for (i = 0; i < length; i++) {
+      if (this._rawo) {
+        this[name][i].write();
+      } else {
+        this.size += this[name][i].getLength();
+      }
+    }
+  }
+  // @endif
+};
+
 ISOBox.prototype._readInt = function(size) {
   var result = null;
   switch(size) {
