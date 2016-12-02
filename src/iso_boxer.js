@@ -4,11 +4,11 @@ ISOBoxer.parseBuffer = function(arrayBuffer) {
   return new ISOFile(arrayBuffer).parse();
 };
 
-ISOBoxer.addBoxParser = function(type, parser) {
+ISOBoxer.addBoxProcessor = function(type, parser) {
   if (typeof type !== 'string' || typeof parser !== 'function') {
     return;
   }
-  ISOBox.prototype._boxParsers[type] = parser;
+  ISOBox.prototype._boxProcessors[type] = parser;
 };
 
 // @ifdef WRITE
