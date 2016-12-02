@@ -24,6 +24,10 @@ ISOBox.create = function(type, parent) {
   return newBox;
 };
 
+ISOBox.prototype._boxContainers = ['dinf', 'edts', 'mdia', 'meco', 'mfra', 'minf', 'moof', 'moov', 'mvex', 'stbl', 'strk', 'traf', 'trak', 'tref', 'udta', 'vttc'];
+
+ISOBox.prototype._boxProcessors = {};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Generic read/write functions
 
@@ -297,6 +301,4 @@ ISOBox.prototype._parseContainerBox = function() {
   }
 };
 
-ISOBox.prototype._boxContainers = ['dinf', 'edts', 'mdia', 'meco', 'mfra', 'minf', 'moof', 'moov', 'mvex', 'stbl', 'strk', 'traf', 'trak', 'tref', 'udta', 'vttc'];
 
-ISOBox.prototype._boxParsers = {};
