@@ -239,6 +239,7 @@ ISOBox.prototype._readData = function(size) {
 };
 
 ISOBox.prototype._parseBox = function() {
+  this._parsing = true;
   this._cursor.offset = this._offset;
 
   // return immediately if there are not enough bytes to read the header
@@ -247,11 +248,11 @@ ISOBox.prototype._parseBox = function() {
     return;
   }
 
-  this.size = this._readUint(32);
-  this.type = this._readString(4);
+  this._procField('size', 'uint', 32);
+  this._procField('type', 'string', 4);
 
-  if (this.size == 1)      { this.largesize = this._readUint(64); }
-  if (this.type == 'uuid') { this.usertype = this._readString(16); }
+  if (this.size === 1)      { this._procField('largesize', 'uint', 64); }
+  if (this.type === 'uuid') { this._procFieldArray('usertype', 16, 'uint', 8); }
 
   switch(this.size) {
   case 0:
@@ -278,8 +279,8 @@ ISOBox.prototype._parseBox = function() {
   if (!this._incomplete) {
     if (this._boxContainers.indexOf(this.type) !== -1) {
       this._parseContainerBox();
-    } else if (this._boxParsers[this.type]) {
-      this._boxParsers[this.type].call(this);
+    } else if (this._boxProcessors[this.type]) {
+      this._boxProcessors[this.type].call(this);
     }
   }
 };
