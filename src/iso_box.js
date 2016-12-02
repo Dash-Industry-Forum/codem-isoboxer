@@ -128,6 +128,28 @@ ISOBox.prototype._procSubBoxes = function(name, length) {
   // @endif
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Read/parse functions
+
+ISOBox.prototype._readField = function(type, size) {
+  switch (type) {
+    case 'uint':
+      return this._readUint(size);
+    case 'int':
+      return this._readInt(size);
+    case 'template':
+      return this._readTemplate(size);
+    case 'string':
+      return (size === -1) ? this._readTerminatedString() : this._readString(size);
+    case 'data':
+      return this._readData(size);
+    case 'utf8':
+      return this._readUTF8String();
+    default:
+      return -1;
+  }
+};
+
 ISOBox.prototype._readInt = function(size) {
   var result = null;
   switch(size) {
