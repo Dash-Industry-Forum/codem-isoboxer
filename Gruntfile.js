@@ -1,7 +1,11 @@
 module.exports = function(grunt) {
   var banner = '/*! <%= pkg.name %> v<%= pkg.version %> <%= licenseUrl %> */\n';
   var boxes = grunt.option('boxes');
-  
+
+  function includeWriteFunctions() {
+    return (grunt.option('write') !== false);
+  }
+
   function getDestinationFile() {
     return (boxes ? 'dist/iso_boxer.' + boxes + '.js' : 'dist/iso_boxer.js');
   }
@@ -37,10 +41,26 @@ module.exports = function(grunt) {
     });
     return result;
   }
-  
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    licenseUrl: 'https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt', 
+    licenseUrl: 'https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt',
+    preprocess: {
+      options: {
+        context : {
+          WRITE: includeWriteFunctions()
+        }
+      },
+      inline : {
+        src : [ getDestinationFile() ],
+        options: {
+          inline : true,
+          context : {
+            WRITE: includeWriteFunctions()
+          }
+        }
+      }
+    },
     concat: {
       options: {
         banner: banner,
@@ -68,6 +88,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-preprocess');
 
-  grunt.registerTask('default', ['concat', 'uglify']);
+  grunt.registerTask('default', ['concat', 'preprocess', 'uglify']);
 };
