@@ -1,3 +1,7 @@
+## codem-isoboxer 0.2.10 (2016/12/022) ##
+
+* Updated `subs` parser to follow the spec more closely (@2bert, @TobbeEdgeware)
+
 ## codem-isoboxer 0.2.9 (2016/11/29) ##
 
 * `dref`, `url `, `urn `, `smhd` parsing (@bbert)
