@@ -13,14 +13,14 @@ describe('ISOFile', function() {
     
     expect(box.type).toEqual('mdat');
     expect(box.size).toEqual(21530);
-  })
-  
+  });
+
   it('should fetch all boxes from a parsed file', function() {
     var parsedFile  = loadParsedFixture('./test/fixtures/captions_fragmented.mp4');
     var boxes = parsedFile.fetchAll('mdat');
     
     expect(boxes.length).toEqual(158);
-    for (box in boxes) {
+    for (var box in boxes) {
       expect(boxes[box].type).toEqual('mdat');
     }
   })

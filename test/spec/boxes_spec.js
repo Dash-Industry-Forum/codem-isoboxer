@@ -14,8 +14,8 @@ describe('free box', function() {
     expect(box.type).toEqual('free');
     expect(box.size).toEqual(59);
     expect(box.data.byteLength).toEqual(51);
-  })
-})
+  });
+});
 
 describe('ftyp box', function() {
   it('should correctly parse the box', function() {
@@ -27,7 +27,7 @@ describe('ftyp box', function() {
     expect(box.major_brand).toEqual('isom');
     expect(box.minor_version).toEqual(1);
     expect(box.compatible_brands).toEqual(['isom']);
-  })
+  });
 });
 
 describe('elst box', function() {
@@ -41,7 +41,7 @@ describe('elst box', function() {
     expect(box.entries[0].media_rate_fraction).toEqual(0);
     expect(box.entries[0].media_time).toEqual(1024);
     expect(box.entries[0].segment_duration).toEqual(1000);
-  })
+  });
 });
 
 describe('hdlr box', function() {
@@ -56,15 +56,15 @@ describe('hdlr box', function() {
     expect(box.handler_type).toEqual('subt');
     expect(box.reserved).toEqual([0,0,0]);
     expect(box.name).toEqual('*xml:ext=ttml@GPAC0.5.1-DEV-rev5545');
-  })
+  });
 
   it('should handle null-terminated strings that are not null-terminated and might exceed box boundaries', function() {
     var parsedFile  = loadParsedFixture('./test/fixtures/240fps_go_pro_hero_4.mp4');
     var box = parsedFile.fetch('hdlr');
 
     expect(box.name).toEqual("\tGoPro AVC");
-  })
-})
+  });
+});
 
 describe('mdat box', function() {
   it('should correctly parse the box', function() {
@@ -74,9 +74,8 @@ describe('mdat box', function() {
     expect(box.type).toEqual('mdat');
     expect(box.size).toEqual(21530);
     expect(box.data.byteLength).toEqual(21522);
-  })
-
-})
+  });
+});
 
 describe('mehd box', function() {
   it('should correctly parse the box', function() {
@@ -86,8 +85,8 @@ describe('mehd box', function() {
     expect(box.type).toEqual('mehd');
     expect(box.size).toEqual(16);
     expect(box.fragment_duration).toEqual(2047);
-  })
-})
+  });
+});
 
 describe('mfro box', function() {
   it('should correctly parse the box', function() {
@@ -97,8 +96,8 @@ describe('mfro box', function() {
     expect(box.type).toEqual('mfro');
     expect(box.size).toEqual(16);
     expect(box.mfra_size).toEqual(105);
-  })
-})
+  });
+});
 
 describe('moov box', function() {
   it('should correctly parse the box', function() {
@@ -108,8 +107,8 @@ describe('moov box', function() {
     expect(box.type).toEqual('moov');
     expect(box.size).toEqual(1028);
     expect(box.boxes.length).toEqual(2);
-  })
-})
+  });
+});
 
 describe('ssix box', function() {
   it('should correctly parse the box', function() {
@@ -125,8 +124,8 @@ describe('ssix box', function() {
     expect(box.subsegments[0].ranges_count).toEqual(70);
     expect(box.subsegments[0].ranges[45].level).toEqual(2);
     expect(box.subsegments[0].ranges[45].range_size).toEqual(7312);
-  })
-})
+  });
+});
 
 describe('stsd box', function() {
   it('should correctly parse the box', function() {
@@ -137,8 +136,8 @@ describe('stsd box', function() {
     expect(stsd[0].entries[0].type).toEqual('avc1');
     expect(stsd[1].entries[0].type).toEqual('mp4a');
     expect(stsd[2].entries[0].type).toEqual('fdsc');
-  })
-})
+  });
+});
 
 describe('avc1 box', function() {
   it('should correctly parse the box', function() {
@@ -163,8 +162,8 @@ describe('avc1 box', function() {
     expect(box.depth).toEqual(24);
     expect(box.pre_defined3).toEqual(-1);
     expect(box.config.byteLength).toEqual(98);
-  })
-})
+  });
+});
 
 describe('mp4a box', function() {
   it('should correctly parse the box', function() {
@@ -183,8 +182,8 @@ describe('mp4a box', function() {
     expect(box.reserved3).toEqual(0);
     expect(box.samplerate).toEqual(48000);
     expect(box.esds.byteLength).toEqual(50);
-  })
-})
+  });
+});
 
 describe('trex box', function() {
   it('should correctly parse the box', function() {
@@ -208,8 +207,8 @@ describe('trex box', function() {
     expect(boxes[1].default_sample_duration).toEqual(0);
     expect(boxes[1].default_sample_size).toEqual(0);
     expect(boxes[1].default_sample_flags).toEqual(0);
-  })
-})
+  });
+});
 
 describe('Text samples', function() {
   describe('vttc box', function() {
@@ -222,8 +221,8 @@ describe('Text samples', function() {
 
       var box = parsedBuffer.boxes[0];
       expect(box.type).toEqual('vttc');
-    })
-  })
+    });
+  });
 
   describe('payl box', function() {
     it('should correctly parse the box from sample data', function() {
@@ -236,8 +235,8 @@ describe('Text samples', function() {
       var box = parsedBuffer.boxes[0].boxes[0];
       expect(box.type).toEqual('payl');
       expect(box.cue_text).toEqual("You're a jerk, Thom.\n");
-    })
-  })
+    });
+  });
 
   describe('vtte box', function() {
     it('should correctly parse the box from sample data', function() {
@@ -249,8 +248,8 @@ describe('Text samples', function() {
 
       var box = parsedBuffer.boxes[1];
       expect(box.type).toEqual('vtte');
-    })
-  })
+    });
+  });
 
   describe('subs box', function() {
     it('should correctly parse the box from sample data', function() {
@@ -266,8 +265,8 @@ describe('Text samples', function() {
       expect(boxes[0].entries[0].subsamples[0].subsample_priority).toEqual(0);
       expect(boxes[0].entries[0].subsamples[0].discardable).toEqual(0);
       expect(boxes[0].entries[0].subsamples[0].codec_specific_parameters).toEqual(0);
-    })
-  })
+    });
+  });
 
   describe('smhd box', function() {
     it('should correctly parse the box from sample data', function() {
@@ -276,8 +275,8 @@ describe('Text samples', function() {
       expect(boxes.length).toEqual(1);
       expect(boxes[0].type).toEqual('smhd');
       expect(boxes[0].balance).toEqual(0.0);
-    })
-  })
+    });
+  });
 
   describe('vmhd box', function() {
     it('should correctly parse the box from sample data', function() {
@@ -287,8 +286,8 @@ describe('Text samples', function() {
       expect(boxes[0].type).toEqual('vmhd');
       expect(boxes[0].graphicsmode).toEqual(0);
       expect(boxes[0].opcolor).toEqual([0,0,0]);
-    })
-  })
+    });
+  });
 
   describe('dref box', function() {
     it('should correctly parse the box from sample data', function() {
@@ -301,6 +300,6 @@ describe('Text samples', function() {
       expect(boxes[0].entries[0].version).toEqual(0);
       expect(boxes[0].entries[0].flags).toEqual(1);
       expect(boxes[0].entries[0].location).toEqual('');
-    })
-  })
-})
+    });
+  });
+});
