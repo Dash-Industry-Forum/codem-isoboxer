@@ -38,3 +38,48 @@ ISOFile._sweep = function(type, result, returnEarly) {
     ISOFile._sweep.call(this.boxes[box], type, result, returnEarly);
   }
 };
+
+// @ifdef WRITE
+ISOFile.prototype.write = function() {
+
+  var length = 0,
+      i;
+
+  for (i = 0; i < this.boxes.length; i++) {
+    length += this.boxes[i].getLength(false);
+  }
+
+  var bytes = new Uint8Array(length);
+  this._rawo = new DataView(bytes.buffer);
+  this.bytes = bytes;
+  this._cursor.offset = 0;
+
+  for (i = 0; i < this.boxes.length; i++) {
+    this.boxes[i].write();
+  }
+
+  return bytes.buffer;
+};
+
+ISOFile.prototype.create = function(type, parent, previousType) {
+
+  var newBox = ISOBox.create(type, parent),
+      inserted = false;
+
+  if (previousType) {
+    for (var i = 0; i < parent.boxes.length; i++) {
+      if (previousType === parent.boxes[i].type) {
+        parent.boxes.splice(i + 1, 0, newBox);
+        inserted = true;
+        break;
+      }
+    }
+  }
+
+  if (!inserted) {
+    parent.boxes.push(newBox);
+  }
+
+  return newBox;
+};
+// @endif
