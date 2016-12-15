@@ -123,6 +123,53 @@ ISOBoxer.Utils.utf8ToByteArray = function(string) {
   }
   return u;
 };
+
+// Method to append a box in the list of child boxes
+// The 'pos' parameter can be either:
+//   - (number) a position index at which to insert the new box
+//   - (string) the type of the box after which to insert the new box
+//   - (object) the box after which to insert the new box
+ISOBoxer.Utils.appendBox = function(parent, box, pos) {
+  box._offset = parent._cursor.offset;
+  box._root = (parent._root ? parent._root : parent);
+  box._raw = parent._raw;
+  box._parent = parent;
+
+  if (pos === -1) {
+    // The new box is a sub-box of the parent but not added in boxes array,
+    // for example when the new box is set as an entry (see dref and stsd for example)
+    return;
+  }
+
+  if (pos === undefined || pos === null) {
+    parent.boxes.push(box);
+    return;
+  }
+
+  var index = -1,
+      type;
+
+  if (typeof pos === "number") {
+    index = pos;
+  } else {
+    if (typeof pos === "string") {
+      type = pos;
+    } else if (typeof pos === "object" && pos.type) {
+      type = pos.type;
+    } else {
+      parent.boxes.push(box);
+      return;
+    }
+
+    for (var i = 0; i < parent.boxes.length; i++) {
+      if (type === parent.boxes[i].type) {
+        index = i + 1;
+        break;
+      }
+    }
+  }
+  parent.boxes.splice(index, 0, box);
+};
 // @endif
 
 if (typeof exports !== 'undefined') {
