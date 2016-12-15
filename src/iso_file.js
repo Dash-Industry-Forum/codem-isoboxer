@@ -61,7 +61,11 @@ ISOFile.prototype.write = function() {
   return bytes.buffer;
 };
 
-ISOFile.prototype.create = function(type, parent, previousType) {
+ISOFile.prototype.append = function(box, pos) {
+  ISOBoxer.Utils.appendBox(this, box, pos);
+};
+
+/*ISOFile.prototype.create = function(type, parent, previousType) {
 
   var newBox = ISOBox.create(type, parent),
       inserted = false;
@@ -81,5 +85,5 @@ ISOFile.prototype.create = function(type, parent, previousType) {
   }
 
   return newBox;
-};
+};*/
 // @endif
