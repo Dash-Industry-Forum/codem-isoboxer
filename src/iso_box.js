@@ -331,7 +331,7 @@ ISOBox.prototype.getLength = function() {
   } else if (this._boxProcessors[this.type]) {
     this._boxProcessors[this.type].call(this);
   } else if (this._data) {
-    this.size += this._data.byteLength;
+    this._writeData(this._data);
   }
 
   return this.size;
