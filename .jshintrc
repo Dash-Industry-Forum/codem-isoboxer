@@ -16,6 +16,9 @@
     "predef" : [
         "ISOBox",
         "ISOBoxer",
-        "ISOFile"
+        "ISOFile",
+        "describe",
+        "expect",
+        "it"
     ]
 }
