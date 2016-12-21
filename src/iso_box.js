@@ -282,11 +282,12 @@ ISOBox.prototype._parseBox = function() {
 
   // additional parsing
   if (!this._incomplete) {
+    if (this._boxProcessors[this.type]) {
+      this._boxProcessors[this.type].call(this);
+    }
     if (this._boxContainers.indexOf(this.type) !== -1) {
       this._parseContainerBox();
-    } else if (this._boxProcessors[this.type]) {
-      this._boxProcessors[this.type].call(this);
-    } else {
+    } else{
       // Unknown box => read and store box content
       this._data = this._readData();
     }
