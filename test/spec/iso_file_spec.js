@@ -38,7 +38,10 @@ describe('ISOFile.write', function() {
                'subsample.m4s',
                'test_frag.mp4',
                'webvtt.m4s',
-               'mss_moof.mp4'];
+               'mss_moof.mp4',
+               'mss_moov_encrypted_audio.mp4',
+               'mss_moov_encrypted_video.mp4'
+               ];
 
   for (var i = 0; i < files.length; i++) {
     var file = files[i];
