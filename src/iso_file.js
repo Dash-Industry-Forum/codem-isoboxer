@@ -64,26 +64,4 @@ ISOFile.prototype.write = function() {
 ISOFile.prototype.append = function(box, pos) {
   ISOBoxer.Utils.appendBox(this, box, pos);
 };
-
-/*ISOFile.prototype.create = function(type, parent, previousType) {
-
-  var newBox = ISOBox.create(type, parent),
-      inserted = false;
-
-  if (previousType) {
-    for (var i = 0; i < parent.boxes.length; i++) {
-      if (previousType === parent.boxes[i].type) {
-        parent.boxes.splice(i + 1, 0, newBox);
-        inserted = true;
-        break;
-      }
-    }
-  }
-
-  if (!inserted) {
-    parent.boxes.push(newBox);
-  }
-
-  return newBox;
-};*/
 // @endif
