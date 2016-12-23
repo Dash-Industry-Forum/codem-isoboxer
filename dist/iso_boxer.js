@@ -1,4 +1,4 @@
-/*! codem-isoboxer v0.2.10 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
+/*! codem-isoboxer v0.3.0 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
 var ISOBoxer = {};
 
 ISOBoxer.parseBuffer = function(arrayBuffer) {
@@ -529,21 +529,12 @@ ISOBox.prototype._parseBox = function() {
     if (this._boxProcessors[this.type]) {
       this._boxProcessors[this.type].call(this);
     }
-
     if (this._boxContainers.indexOf(this.type) !== -1) {
       this._parseContainerBox();
     } else{
-      this._data = this._readData();
-    }
-
-    /*if (this._boxContainers.indexOf(this.type) !== -1) {
-      this._parseContainerBox();
-    } else if (this._boxProcessors[this.type]) {
-      this._boxProcessors[this.type].call(this);
-    } else {
       // Unknown box => read and store box content
       this._data = this._readData();
-    }*/
+    }
   }
 };
 

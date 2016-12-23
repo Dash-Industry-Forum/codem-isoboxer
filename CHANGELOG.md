@@ -1,6 +1,11 @@
-## codem-isoboxer 0.2.10 (2016/12/022) ##
+## codem-isoboxer 0.3.0 (2016/12/23) ##
 
-* Updated `subs` parser to follow the spec more closely (@2bert, @TobbeEdgeware)
+* write support (@bbert)
+* encrypted boxes support (encv,enca,frma,pssh,schm,sdtp,tenc) (@nicosang)
+
+## codem-isoboxer 0.2.10 (2016/12/02) ##
+
+* Updated `subs` parser to follow the spec more closely (@bbert, @TobbeEdgeware)
 
 ## codem-isoboxer 0.2.9 (2016/11/29) ##
 
