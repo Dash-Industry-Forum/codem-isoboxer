@@ -1,5 +1,5 @@
 // ISO/IEC 14496-12:2012 - 8.5.2.2 mp4a box (use AudioSampleEntry definition and naming)
-ISOBox.prototype._boxProcessors['mp4a'] = function() {
+ISOBox.prototype._boxProcessors['mp4a'] = ISOBox.prototype._boxProcessors['enca'] = function() {
   // SampleEntry fields
   this._procFieldArray('reserved1', 6,    'uint', 8);
   this._procField('data_reference_index', 'uint', 16);

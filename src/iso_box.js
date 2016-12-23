@@ -20,7 +20,7 @@ ISOBox.create = function(type) {
   return newBox;
 };
 
-ISOBox.prototype._boxContainers = ['dinf', 'edts', 'mdia', 'meco', 'mfra', 'minf', 'moof', 'moov', 'mvex', 'stbl', 'strk', 'traf', 'trak', 'tref', 'udta', 'vttc'];
+ISOBox.prototype._boxContainers = ['dinf', 'edts', 'mdia', 'meco', 'mfra', 'minf', 'moof', 'moov', 'mvex', 'stbl', 'strk', 'traf', 'trak', 'tref', 'udta', 'vttc', 'sinf', 'schi', 'encv', 'enca'];
 
 ISOBox.prototype._boxProcessors = {};
 
@@ -282,11 +282,12 @@ ISOBox.prototype._parseBox = function() {
 
   // additional parsing
   if (!this._incomplete) {
+    if (this._boxProcessors[this.type]) {
+      this._boxProcessors[this.type].call(this);
+    }
     if (this._boxContainers.indexOf(this.type) !== -1) {
       this._parseContainerBox();
-    } else if (this._boxProcessors[this.type]) {
-      this._boxProcessors[this.type].call(this);
-    } else {
+    } else{
       // Unknown box => read and store box content
       this._data = this._readData();
     }
@@ -324,13 +325,17 @@ ISOBox.prototype.getLength = function() {
   if (this.size === 1)      { this._procField('largesize', 'uint', 64); }
   if (this.type === 'uuid') { this._procFieldArray('usertype', 16, 'uint', 8); }
 
+  if (this._boxProcessors[this.type]) {
+    this._boxProcessors[this.type].call(this);
+  }
+
   if (this._boxContainers.indexOf(this.type) !== -1) {
     for (var i = 0; i < this.boxes.length; i++) {
       this.size += this.boxes[i].getLength();
     }
-  } else if (this._boxProcessors[this.type]) {
-    this._boxProcessors[this.type].call(this);
-  } else if (this._data) {
+  } 
+
+  if (this._data) {
     this._writeData(this._data);
   }
 
@@ -358,13 +363,17 @@ ISOBox.prototype.write = function() {
   if (this.size === 1)      { this._procField('largesize', 'uint', 64); }
   if (this.type === 'uuid') { this._procFieldArray('usertype', 16, 'uint', 8); }
 
+  if (this._boxProcessors[this.type]) {
+    this._boxProcessors[this.type].call(this);
+  }
+
   if (this._boxContainers.indexOf(this.type) !== -1) {
     for (var i = 0; i < this.boxes.length; i++) {
       this.boxes[i].write();
     }
-  } else if (this._boxProcessors[this.type]) {
-    this._boxProcessors[this.type].call(this);
-  } else if (this._data) {
+  } 
+
+  if (this._data) {
     this._writeData(this._data);
   }
 

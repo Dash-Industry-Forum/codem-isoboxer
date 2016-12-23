@@ -1,5 +1,5 @@
 // ISO/IEC 14496-15:2014 - avc1 box
-ISOBox.prototype._boxProcessors['avc1'] = function() {
+ISOBox.prototype._boxProcessors['avc1'] = ISOBox.prototype._boxProcessors['encv'] = function() {
   // SampleEntry fields
   this._procFieldArray('reserved1', 6,    'uint', 8);
   this._procField('data_reference_index', 'uint', 16);
