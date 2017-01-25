@@ -64,4 +64,13 @@ describe('ISOBoxer', function() {
       expect(parsedFile.fetch('trak')).toEqual(undefined);
     });
   });
+
+  describe('when parsing garbage buffer', function() {
+    it('should exit the parser if garbage is zero', function() {
+      var zero = new Uint8Array(1500);
+      var parsedFile = ISOBoxer.parseBuffer(zero.buffer);
+      expect(parsedFile.boxes.length).toEqual(1);
+      expect(parsedFile.boxes[0].size).toEqual(0);
+    })
+  });
 });
