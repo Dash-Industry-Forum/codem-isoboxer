@@ -1,3 +1,7 @@
+## codem-isoboxer 0.3.1 (2017/01/25) ##
+
+* fix for zero filled buffer hang (@bendenoz)
+
 ## codem-isoboxer 0.3.0 (2016/12/23) ##
 
 * write support (@bbert)
