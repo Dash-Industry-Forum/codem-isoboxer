@@ -618,7 +618,7 @@ ISOBox.prototype._writeInt = function(size, value) {
     case 64:
       // Warning: JavaScript cannot handle 64-bit integers natively.
       // This will give unexpected results for integers >= 2^53
-      var s1 = Math.round(value / Math.pow(2,32));
+      var s1 = Math.floor(value / Math.pow(2,32));
       var s2 = value - (s1 * Math.pow(2,32));
       this._rawo.setUint32(offset, s1);
       this._rawo.setUint32(offset + 4, s2);
@@ -654,7 +654,7 @@ ISOBox.prototype._writeUint = function(size, value) {
     case 64:
       // Warning: JavaScript cannot handle 64-bit integers natively.
       // This will give unexpected results for integers >= 2^53
-      s1 = Math.round(value / Math.pow(2,32));
+      s1 = Math.floor(value / Math.pow(2,32));
       s2 = value - (s1 * Math.pow(2,32));
       this._rawo.setUint32(offset, s1);
       this._rawo.setUint32(offset + 4, s2);
@@ -683,7 +683,7 @@ ISOBox.prototype._writeTerminatedString = function(str) {
 };
 
 ISOBox.prototype._writeTemplate = function(size, value) {
-  var pre = Math.round(value);
+  var pre = Math.floor(value);
   var post = (value - pre) * Math.pow(2, size / 2);
   this._writeUint(size / 2, pre);
   this._writeUint(size / 2, post);
