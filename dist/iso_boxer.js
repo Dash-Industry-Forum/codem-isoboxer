@@ -1,4 +1,4 @@
-/*! codem-isoboxer v0.3.1 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
+/*! codem-isoboxer v0.3.2 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
 var ISOBoxer = {};
 
 ISOBoxer.parseBuffer = function(arrayBuffer) {

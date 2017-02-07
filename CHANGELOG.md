@@ -1,3 +1,7 @@
+## codem-isoboxer 0.3.2 (2017/02/07) ##
+
+* fix for rounding error on 64-bit numbers (@nicosang)
+
 ## codem-isoboxer 0.3.1 (2017/01/25) ##
 
 * fix for zero filled buffer hang (@bendenoz)
