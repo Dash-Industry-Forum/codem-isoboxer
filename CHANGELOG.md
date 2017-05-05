@@ -1,3 +1,7 @@
+## codem-isoboxer 0.3.3 (2017/05/05) ##
+
+* fallback for browsers that don't support `Uint8Array.from` (@bbert)
+
 ## codem-isoboxer 0.3.2 (2017/02/07) ##
 
 * fix for rounding error on 64-bit numbers (@nicosang)

@@ -1,4 +1,4 @@
-/*! codem-isoboxer v0.3.2 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
+/*! codem-isoboxer v0.3.3 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
 var ISOBoxer = {};
 
 ISOBoxer.parseBuffer = function(arrayBuffer) {
@@ -690,15 +690,24 @@ ISOBox.prototype._writeTemplate = function(size, value) {
 };
 
 ISOBox.prototype._writeData = function(data) {
+  var i;
   if (data instanceof Array) {
-    data = new DataView(Uint8Array.from(data).buffer);
+    if (!Uint8Array.from) {
+      var typedArray = new Uint8Array(data.length);
+      for (i = 0; i < data.length; i++) {
+        typedArray[i] = data[i];
+      }
+      data = new DataView(typedArray.buffer);
+    } else {
+      data = new DataView(Uint8Array.from(data).buffer);
+    }
   }
   if (data instanceof Uint8Array) {
     data = new DataView(data.buffer);
   }
   if (this._rawo) {
     var offset = this._cursor.offset - this._rawo.byteOffset;
-    for (var i = 0; i < data.byteLength; i++) {
+    for (i = 0; i < data.byteLength; i++) {
         this._rawo.setUint8(offset + i, data.getUint8(i));
     }
     this._cursor.offset += data.byteLength;
