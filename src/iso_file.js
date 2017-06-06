@@ -39,7 +39,7 @@ ISOFile._sweep = function(type, result, returnEarly) {
   }
 };
 
-// @ifdef WRITE
+// @if WRITE
 ISOFile.prototype.write = function() {
 
   var length = 0,

@@ -11,7 +11,7 @@ ISOBoxer.addBoxProcessor = function(type, parser) {
   ISOBox.prototype._boxProcessors[type] = parser;
 };
 
-// @ifdef WRITE
+// @if WRITE
 ISOBoxer.createFile = function() {
   return new ISOFile();
 };
@@ -78,7 +78,7 @@ ISOBoxer.Utils.dataViewToString = function(dataView, encoding) {
   return a.join('');
 };
 
-// @ifdef WRITE
+// @if WRITE
 ISOBoxer.Utils.utf8ToByteArray = function(string) {
   // Only UTF-8 encoding is supported by TextEncoder
   var u, i;
@@ -159,7 +159,7 @@ ISOBoxer.Utils.appendBox = function(parent, box, pos) {
 if (typeof exports !== 'undefined') {
   exports.parseBuffer     = ISOBoxer.parseBuffer;
   exports.addBoxProcessor = ISOBoxer.addBoxProcessor;
-  // @ifdef WRITE
+  // @if WRITE
   exports.createFile      = ISOBoxer.createFile;
   exports.createBox       = ISOBoxer.createBox;
   exports.createFullBox   = ISOBoxer.createFullBox;
