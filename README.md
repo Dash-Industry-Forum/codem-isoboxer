@@ -165,6 +165,15 @@ Please note, for size concerns, tests are only included in the Github repository
 
 ## Advanced build options
 
+### Writing functionality
+
+By default, `codem-isoboxer` build file contains all the code that manages the parsing AND the writing functionalities.
+If you are only interested in the parsing functionality, you can generate a build without writing functionality. The syntax for building is:
+
+    grunt --no-writing
+
+### Modular build
+
 `codem-isoboxer` now has the option for modular builds. This means you can specify which boxes you are interested in during build time and you will get a generated file containing only the necessary boxes. This can help you further decrease the size of the library if you know you will only need access to some boxes. The syntax for building is:
 
     grunt --boxes=moov,mdat

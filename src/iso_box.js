@@ -31,7 +31,7 @@ ISOBox.prototype._procField = function (name, type, size) {
   if (this._parsing) {
     this[name] = this._readField(type, size);
   }
-  // @ifdef WRITE
+  // @if WRITE
   else {
     this._writeField(type, size, this[name]);
   }
@@ -46,7 +46,7 @@ ISOBox.prototype._procFieldArray = function (name, length, type, size) {
       this[name][i] = this._readField(type, size);
     }
   }
-  // @ifdef WRITE
+  // @if WRITE
   else {
     for (i = 0; i < this[name].length; i++) {
       this._writeField(type, size, this[name][i]);
@@ -69,7 +69,7 @@ ISOBox.prototype._procEntries = function(name, length, fn) {
       fn.call(this, this[name][i]);
     }
   }
-  // @ifdef WRITE
+  // @if WRITE
   else {
     for (i = 0; i < length; i++) {
       fn.call(this, this[name][i]);
@@ -87,7 +87,7 @@ ISOBox.prototype._procSubEntries = function(entry, name, length, fn) {
       fn.call(this, entry[name][i]);
     }
   }
-  // @ifdef WRITE
+  // @if WRITE
   else {
     for (i = 0; i < length; i++) {
       fn.call(this, entry[name][i]);
@@ -100,7 +100,7 @@ ISOBox.prototype._procEntryField = function (entry, name, type, size) {
   if (this._parsing) {
     entry[name] = this._readField(type, size);
   }
-  // @ifdef WRITE
+  // @if WRITE
   else {
     this._writeField(type, size, entry[name]);
   }
@@ -115,7 +115,7 @@ ISOBox.prototype._procSubBoxes = function(name, length) {
       this[name].push(ISOBox.parse(this));
     }
   }
-  // @ifdef WRITE
+  // @if WRITE
   else {
     for (i = 0; i < length; i++) {
       if (this._rawo) {
@@ -306,7 +306,7 @@ ISOBox.prototype._parseContainerBox = function() {
   }
 };
 
-// @ifdef WRITE
+// @if WRITE
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Write functions
 

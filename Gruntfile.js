@@ -3,7 +3,7 @@ module.exports = function(grunt) {
   var boxes = grunt.option('boxes');
 
   function includeWriteFunctions() {
-    return (grunt.option('write') !== false);
+    return (grunt.option('writing') !== false);
   }
 
   function getDestinationFile() {
