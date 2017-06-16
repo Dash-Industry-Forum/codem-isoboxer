@@ -1,3 +1,7 @@
+## codem-isoboxer 0.3.4 (2017/06/16) ##
+
+* Renamed `--no-write` to `--no-writing` to prevent naming clash
+
 ## codem-isoboxer 0.3.3 (2017/05/05) ##
 
 * fallback for browsers that don't support `Uint8Array.from` (@bbert)
