@@ -20,6 +20,25 @@ ISOBox.create = function(type) {
   return newBox;
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Box utility functions - read-only contextual properties
+
+ISOBox.prototype.offset = function() {
+  return this._offset || 0;
+};
+
+ISOBox.prototype.root = function() {
+  return this._root || null;
+};
+
+ISOBox.prototype.raw = function() {
+  return this._raw || null;
+};
+
+ISOBox.prototype.parent = function() {
+  return this._parent || null;
+};
+
 ISOBox.prototype._boxContainers = ['dinf', 'edts', 'mdia', 'meco', 'mfra', 'minf', 'moof', 'moov', 'mvex', 'stbl', 'strk', 'traf', 'trak', 'tref', 'udta', 'vttc', 'sinf', 'schi', 'encv', 'enca'];
 
 ISOBox.prototype._boxProcessors = {};
