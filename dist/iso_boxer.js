@@ -253,6 +253,25 @@ ISOBox.create = function(type) {
   return newBox;
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Box utility functions - read-only contextual properties
+
+ISOBox.prototype.offset = function() {
+  return this._offset || 0;
+};
+
+ISOBox.prototype.root = function() {
+  return this._root || null;
+};
+
+ISOBox.prototype.raw = function() {
+  return this._raw || null;
+};
+
+ISOBox.prototype.parent = function() {
+  return this._parent || null;
+};
+
 ISOBox.prototype._boxContainers = ['dinf', 'edts', 'mdia', 'meco', 'mfra', 'minf', 'moof', 'moov', 'mvex', 'stbl', 'strk', 'traf', 'trak', 'tref', 'udta', 'vttc', 'sinf', 'schi', 'encv', 'enca'];
 
 ISOBox.prototype._boxProcessors = {};
@@ -758,7 +777,7 @@ ISOBox.prototype._writeField = function(type, size, value) {
 };
 
 // ISO/IEC 14496-15:2014 - avc1 box
-ISOBox.prototype._boxProcessors['avc1'] = ISOBox.prototype._boxProcessors['encv'] = function() {
+ISOBox.prototype._boxProcessors['mp4v'] = ISOBox.prototype._boxProcessors['avc1'] = ISOBox.prototype._boxProcessors['encv'] = function() {
   // SampleEntry fields
   this._procFieldArray('reserved1', 6,    'uint', 8);
   this._procField('data_reference_index', 'uint', 16);
@@ -778,6 +797,13 @@ ISOBox.prototype._boxProcessors['avc1'] = ISOBox.prototype._boxProcessors['encv'
   // AVCSampleEntry fields
   this._procField('config', 'data', -1);
 };
+
+// AVC Configuration Box
+/*
+ISOBox.prototype._boxProcessors['avcC'] = function() {
+  this._procFullBox();
+};
+*/
 
 // ISO/IEC 14496-12:2012 - 8.7.2 Data Reference Box
 ISOBox.prototype._boxProcessors['dref'] = function() {
@@ -917,6 +943,13 @@ ISOBox.prototype._boxProcessors['mvhd'] = function() {
   this._procFieldArray('pre_defined', 6,'uint',   32);
   this._procField('next_track_ID',      'uint',     32);
 };
+
+/*
+// AVC Configuration Box
+ISOBox.prototype._boxProcessors['pasp'] = function() {
+  this._procFullBox();
+};
+*/
 
 // ISO/IEC 14496-30:2014 - WebVTT Cue Payload Box.
 ISOBox.prototype._boxProcessors['payl'] = function() {
