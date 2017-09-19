@@ -454,6 +454,9 @@ ISOBox.prototype._readTerminatedString = function() {
 
 ISOBox.prototype._readData = function(size) {
   var length = (size > 0) ? size : (this._raw.byteLength - (this._cursor.offset - this._offset));
+  if (length === 0) {
+    return null
+  }
   var data = new DataView(this._raw.buffer, this._cursor.offset, length);
   this._cursor.offset += length;
   return data;
@@ -553,7 +556,7 @@ ISOBox.prototype.getLength = function() {
     for (var i = 0; i < this.boxes.length; i++) {
       this.size += this.boxes[i].getLength();
     }
-  } 
+  }
 
   if (this._data) {
     this._writeData(this._data);
@@ -591,7 +594,7 @@ ISOBox.prototype.write = function() {
     for (var i = 0; i < this.boxes.length; i++) {
       this.boxes[i].write();
     }
-  } 
+  }
 
   if (this._data) {
     this._writeData(this._data);
