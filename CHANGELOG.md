@@ -1,3 +1,7 @@
+## codem-isoboxer 0.3.5 (2017/11/20) ##
+
+* Performance improvement in data reading/writing (@nicosang)
+
 ## codem-isoboxer 0.3.4 (2017/06/16) ##
 
 * Renamed `--no-write` to `--no-writing` to prevent naming clash
