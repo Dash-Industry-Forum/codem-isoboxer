@@ -233,14 +233,26 @@ ISOBox.prototype._readTerminatedString = function() {
 
 ISOBox.prototype._readData = function(size) {
   var length = (size > 0) ? size : (this._raw.byteLength - (this._cursor.offset - this._offset));
-  var data = new DataView(this._raw.buffer, this._cursor.offset, length);
-  this._cursor.offset += length;
-  return data;
+  if (length > 0) {
+    var data = new Uint8Array(this._raw.buffer, this._cursor.offset, length);
+
+    this._cursor.offset += length;
+    return data;
+  }
+  else {
+    return null;
+  }
 };
 
 ISOBox.prototype._readUTF8String = function() {
-  var data = this._readData();
-  return ISOBoxer.Utils.dataViewToString(data);
+  var length = this._raw.byteLength - (this._cursor.offset - this._offset);
+  var data = null;
+  if (length > 0) {
+    data = new DataView(this._raw.buffer, this._cursor.offset, length);
+    this._cursor.offset += length;
+  }
+ 
+  return data ? ISOBoxer.Utils.dataViewToString(data) : data;
 };
 
 ISOBox.prototype._parseBox = function() {
@@ -471,28 +483,27 @@ ISOBox.prototype._writeTemplate = function(size, value) {
 
 ISOBox.prototype._writeData = function(data) {
   var i;
-  if (data instanceof Array) {
-    if (!Uint8Array.from) {
-      var typedArray = new Uint8Array(data.length);
-      for (i = 0; i < data.length; i++) {
-        typedArray[i] = data[i];
+  //data to copy
+  if (data) {
+    if (this._rawo) {
+      //Array and Uint8Array has also to be managed
+      if (data instanceof Array) {
+        var offset = this._cursor.offset - this._rawo.byteOffset;
+        for (var i = 0; i < data.length; i++) {
+          this._rawo.setInt8(offset + i, data[i]);
+        }
+        this._cursor.offset += data.length;
+      } 
+
+      if (data instanceof Uint8Array) {
+        this._root.bytes.set(data, this._cursor.offset);
+        this._cursor.offset += data.length;
       }
-      data = new DataView(typedArray.buffer);
+
     } else {
-      data = new DataView(Uint8Array.from(data).buffer);
+      //nothing to copy only size to compute
+      this.size += data.length;
     }
-  }
-  if (data instanceof Uint8Array) {
-    data = new DataView(data.buffer);
-  }
-  if (this._rawo) {
-    var offset = this._cursor.offset - this._rawo.byteOffset;
-    for (i = 0; i < data.byteLength; i++) {
-        this._rawo.setUint8(offset + i, data.getUint8(i));
-    }
-    this._cursor.offset += data.byteLength;
-  } else {
-    this.size += data.byteLength;
   }
 };
 
