@@ -1,4 +1,4 @@
-/*! codem-isoboxer v0.3.5 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
+/*! codem-isoboxer v0.3.6 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
 var ISOBoxer = {};
 
 ISOBoxer.parseBuffer = function(arrayBuffer) {
@@ -812,15 +812,23 @@ ISOBox.prototype._boxProcessors['elst'] = function() {
 // ISO/IEC 23009-1:2014 - 5.10.3.3 Event Message Box
 ISOBox.prototype._boxProcessors['emsg'] = function() {
   this._procFullBox();
-  this._procField('scheme_id_uri',            'string', -1);
-  this._procField('value',                    'string', -1);
-  this._procField('timescale',                'uint',   32);
-  this._procField('presentation_time_delta',  'uint',   32);
-  this._procField('event_duration',           'uint',   32);
-  this._procField('id',                       'uint',   32);
+  if (this.version == 1) {
+    this._procField('timescale',                'uint',   32);
+    this._procField('presentation_time',        'uint',   64);
+    this._procField('event_duration',           'uint',   32);
+    this._procField('id',                       'uint',   32);
+    this._procField('scheme_id_uri',            'string', -1);
+    this._procField('value',                    'string', -1);
+  } else {
+    this._procField('scheme_id_uri',            'string', -1);
+    this._procField('value',                    'string', -1);
+    this._procField('timescale',                'uint',   32);
+    this._procField('presentation_time_delta',  'uint',   32);
+    this._procField('event_duration',           'uint',   32);
+    this._procField('id',                       'uint',   32);
+  }
   this._procField('message_data',             'data',   -1);
 };
-
 // ISO/IEC 14496-12:2012 - 8.1.2 Free Space Box
 ISOBox.prototype._boxProcessors['free'] = ISOBox.prototype._boxProcessors['skip'] = function() {
   this._procField('data', 'data', -1);

@@ -1,3 +1,7 @@
+## codem-isoboxer 0.3.6 (2018/08/14) ##
+
+* Support for emsg box version 1 (@jeoliva)
+
 ## codem-isoboxer 0.3.5 (2017/11/20) ##
 
 * Performance improvement in data reading/writing (@nicosang)
