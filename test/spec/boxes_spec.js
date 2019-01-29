@@ -168,6 +168,35 @@ describe('avc1 box', function() {
   });
 });
 
+describe('hvc1 box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile = loadParsedFixture('./test/fixtures/hvc1_init.mp4');
+    var stsd = parsedFile.fetchAll('stsd');
+    var box = stsd[0].entries[0];
+
+    expect(box.type).toEqual('hvc1');
+    expect(box.size).toEqual(137);
+    expect(box.reserved1).toEqual([0, 0, 0, 0, 0, 0]);
+    expect(box.data_reference_index).toEqual(1);
+    expect(box.pre_defined1).toEqual(0);
+    expect(box.reserved2).toEqual(0);
+    expect(box.pre_defined2).toEqual([0, 0, 0]);
+    expect(box.width).toEqual(192);
+    expect(box.height).toEqual(108);
+    expect(box.horizresolution).toEqual(72);
+    expect(box.vertresolution).toEqual(72);
+    expect(box.reserved3).toEqual(0);
+    expect(box.frame_count).toEqual(1);
+    expect(box.compressorname).toEqual([0x0B, 0x48, 0x45, 0x56, 0x43, 0x20, 0x43, 0x6F,
+                                        0x64, 0x69, 0x6E, 0x67, 0x00, 0x00, 0x00, 0x00,
+                                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]); // length + 'HEVC Coding'
+    expect(box.depth).toEqual(24);
+    expect(box.pre_defined3).toEqual(-1);
+    expect(box.config.byteLength).toEqual(51);
+  });
+});
+
 describe('mp4a box', function() {
   it('should correctly parse the box', function() {
     var parsedFile  = loadParsedFixture('./test/fixtures/240fps_go_pro_hero_4.mp4');
