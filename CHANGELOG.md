@@ -1,3 +1,7 @@
+## codem-isoboxer 0.3.7 (2019/02/04) ##
+
+* Add support for more VisualSampleEntry types (@davemevans)
+
 ## codem-isoboxer 0.3.6 (2018/08/14) ##
 
 * Support for emsg box version 1 (@jeoliva)
