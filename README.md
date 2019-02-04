@@ -64,7 +64,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 
 ### ISO/IEC 14496-15:2014 (Carriage of network abstraction layer (NAL) unit structured video in ISO base media file format)
 
-* avc1 / encv
+* avc1/2/3/4 / hev1 / hvc1 / encv
 
 Support for more boxes can easily be added by adding additional box parsers in `src/parsers`. Some utility functions are included to help with reading the various ISOBMFF data types from the raw file. Also, see the [Box Support page on the Wiki](https://github.com/madebyhiro/codem-isoboxer/wiki/Box-support) for a full list.
 
