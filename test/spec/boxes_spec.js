@@ -242,6 +242,48 @@ describe('trex box', function() {
   });
 });
 
+describe('stts box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/editlist.mp4');
+    var boxes = parsedFile.fetchAll('stts');
+    var box = boxes[0];
+
+    expect(boxes.length).toEqual(1);
+
+    expect(box.type).toEqual('stts');
+    expect(box.entry_count).toEqual(2);
+    expect(box.entries.length).toEqual(2);
+    expect(box.entries[0].sample_count).toEqual(47);
+    expect(box.entries[0].sample_delta).toEqual(1024);
+    expect(box.entries[1].sample_count).toEqual(1);
+    expect(box.entries[1].sample_delta).toEqual(896);
+  });
+});
+
+describe('ctts box', function() {
+  it('should correctly parse the box', function() {
+    var parsedFile  = loadParsedFixture('./test/fixtures/time_to_sample.mp4');
+    var boxes = parsedFile.fetchAll('ctts');
+    var box = boxes[0];
+
+    expect(boxes.length).toEqual(1);
+
+    expect(box.type).toEqual('ctts');
+    expect(box.entry_count).toEqual(5);
+    expect(box.entries.length).toEqual(5);
+    expect(box.entries[0].sample_count).toEqual(1);
+    expect(box.entries[0].sample_offset).toEqual(1024);
+    expect(box.entries[1].sample_count).toEqual(1);
+    expect(box.entries[1].sample_offset).toEqual(2560);
+    expect(box.entries[2].sample_count).toEqual(1);
+    expect(box.entries[2].sample_offset).toEqual(1024);
+    expect(box.entries[3].sample_count).toEqual(1);
+    expect(box.entries[3].sample_offset).toEqual(0);
+    expect(box.entries[4].sample_count).toEqual(1);
+    expect(box.entries[4].sample_offset).toEqual(512);
+  });
+});
+
 describe('Text samples', function() {
   describe('vttc box', function() {
     it('should correctly parse the box from sample data', function() {
