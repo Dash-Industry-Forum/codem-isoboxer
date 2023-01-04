@@ -342,7 +342,8 @@ describe('Text samples', function() {
       expect(boxes.length).toEqual(60);
       expect(boxes[0].type).toEqual('prft');
       expect(boxes[0].reference_track_ID).toEqual(1);
-      expect(boxes[0].ntp_timestamp).toEqual(16662305022071450000);
+      expect(boxes[0].ntp_timestamp_sec).toEqual(3879495203);
+      expect(boxes[0].ntp_timestamp_frac).toEqual(197568495);
       expect(boxes[0].media_time).toEqual(1355974620);
     });
   });
