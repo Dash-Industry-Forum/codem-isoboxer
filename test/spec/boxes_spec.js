@@ -376,4 +376,17 @@ describe('Text samples', function() {
       expect(boxes[0].entries[0].location).toEqual('');
     });
   });
+
+  describe('prft box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/dash-chunks-prft.m4s');
+      var boxes = parsedFile.fetchAll('prft');
+      expect(boxes.length).toEqual(60);
+      expect(boxes[0].type).toEqual('prft');
+      expect(boxes[0].reference_track_ID).toEqual(1);
+      expect(boxes[0].ntp_timestamp_sec).toEqual(3879495203);
+      expect(boxes[0].ntp_timestamp_frac).toEqual(197568495);
+      expect(boxes[0].media_time).toEqual(1355974620);
+    });
+  });
 });
