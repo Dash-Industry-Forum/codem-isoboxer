@@ -273,7 +273,8 @@ ISOBox.prototype._parseBox = function() {
 
   switch(this.size) {
   case 0:
-    this._raw = new DataView(this._raw.buffer, this._offset, (this._raw.byteLength - this._cursor.offset + 8));
+    // Size zero indicates last box in the file. Consume remaining buffer.
+    this._raw = new DataView(this._raw.buffer, this._offset);
     break;
   case 1:
     if (this._offset + this.size > this._raw.buffer.byteLength) {
