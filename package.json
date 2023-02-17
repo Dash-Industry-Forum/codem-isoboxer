@@ -3,7 +3,11 @@
   "version": "0.3.7",
   "description": "A lightweight JavaScript MP4 (MPEG-4, ISOBMFF) file/box parser.",
   "keywords": [
-    "mp4", "mpeg-4", "mpeg4", "isobmff", "parser"
+    "mp4",
+    "mpeg-4",
+    "mpeg4",
+    "isobmff",
+    "parser"
   ],
   "homepage": "https://github.com/madebyhiro/codem-isoboxer",
   "main": "dist/iso_boxer.js",
@@ -21,13 +25,13 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "arraybuffer-equal": "^1.0.4",
     "grunt": "^1.0.1",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-uglify": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-preprocess": "^5.1.0",
-    "jasmine-node": "^1.14.5",
-    "arraybuffer-equal": "^1.0.4",
+    "jasmine-node": "^1.16.0",
     "jshint": "^2.9.4"
   },
   "scripts": {
@@ -35,5 +39,9 @@
     "jshint": "jshint src/*.js src/**/*.js",
     "grunt": "grunt",
     "watch": "grunt watch"
-  }
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ]
 }
