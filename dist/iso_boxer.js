@@ -1,4 +1,4 @@
-/*! codem-isoboxer v0.3.7 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
+/*! codem-isoboxer v0.3.8 https://github.com/madebyhiro/codem-isoboxer/blob/master/LICENSE.txt */
 var ISOBoxer = {};
 
 ISOBoxer.parseBuffer = function(arrayBuffer) {
@@ -494,7 +494,8 @@ ISOBox.prototype._parseBox = function() {
 
   switch(this.size) {
   case 0:
-    this._raw = new DataView(this._raw.buffer, this._offset, (this._raw.byteLength - this._cursor.offset + 8));
+    // Size zero indicates last box in the file. Consume remaining buffer.
+    this._raw = new DataView(this._raw.buffer, this._offset);
     break;
   case 1:
     if (this._offset + this.size > this._raw.buffer.byteLength) {
@@ -796,6 +797,16 @@ ISOBox.prototype._boxProcessors['encv'] = function() {
   this._procField('config', 'data', -1);
 };
 
+// ISO/IEC 14496-12:2012 - 8.6.1.3 Composition Time To Sample Box
+ISOBox.prototype._boxProcessors['ctts'] = function() {
+  this._procFullBox();
+  this._procField('entry_count', 'uint', 32);
+  this._procEntries('entries', this.entry_count, function(entry) {
+    this._procEntryField(entry, 'sample_count', 'uint', 32);
+    this._procEntryField(entry, 'sample_offset', (this.version === 1) ? 'int' : 'uint', 32);
+  });
+};
+
 // ISO/IEC 14496-12:2012 - 8.7.2 Data Reference Box
 ISOBox.prototype._boxProcessors['dref'] = function() {
   this._procFullBox();
@@ -1043,6 +1054,16 @@ ISOBox.prototype._boxProcessors['stsd'] = function() {
   this._procFullBox();
   this._procField('entry_count', 'uint', 32);
   this._procSubBoxes('entries', this.entry_count);
+};
+
+// ISO/IEC 14496-12:2012 - 8.6.1.2 Decoding Time To Sample Box
+ISOBox.prototype._boxProcessors['stts'] = function() {
+  this._procFullBox();
+  this._procField('entry_count', 'uint', 32);
+  this._procEntries('entries', this.entry_count, function(entry) {
+    this._procEntryField(entry, 'sample_count', 'uint', 32);
+    this._procEntryField(entry, 'sample_delta', 'uint', 32);
+  });
 };
 
 // ISO/IEC 14496-12:2015 - 8.7.7 Sub-Sample Information Box

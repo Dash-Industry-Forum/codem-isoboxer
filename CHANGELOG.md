@@ -1,3 +1,9 @@
+## codem-isoboxer 0.3.8 (2023/02/17) ##
+
+* Add support for prft boxes
+* Add support for stts and ctts boxes
+* Fix box parsing when length is equal to 0
+
 ## codem-isoboxer 0.3.7 (2019/02/04) ##
 
 * Add support for more VisualSampleEntry types (@davemevans)
