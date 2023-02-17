@@ -1,6 +1,6 @@
 {
   "name": "codem-isoboxer",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "A lightweight JavaScript MP4 (MPEG-4, ISOBMFF) file/box parser.",
   "keywords": [
     "mp4",
