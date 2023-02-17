@@ -37,7 +37,7 @@
   "scripts": {
     "test": "npm run grunt && jasmine-node test/spec",
     "jshint": "jshint src/*.js src/**/*.js",
-    "grunt": "grunt",
+    "build": "grunt",
     "watch": "grunt watch"
   },
   "files": [
