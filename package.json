@@ -1,6 +1,6 @@
 {
   "name": "codem-isoboxer",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "A lightweight JavaScript MP4 (MPEG-4, ISOBMFF) file/box parser.",
   "keywords": [
     "mp4",
@@ -35,7 +35,7 @@
     "jshint": "^2.9.4"
   },
   "scripts": {
-    "test": "npm run grunt && jasmine-node test/spec",
+    "test": "grunt && jasmine-node test/spec",
     "jshint": "jshint src/*.js src/**/*.js",
     "build": "grunt",
     "watch": "grunt watch"
