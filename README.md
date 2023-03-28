@@ -61,6 +61,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 * vtte
 * vlab
 * payl
+* sttg
 
 ### ISO/IEC 14496-15:2014 (Carriage of network abstraction layer (NAL) unit structured video in ISO base media file format)
 
