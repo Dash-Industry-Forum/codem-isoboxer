@@ -298,6 +298,24 @@ describe('Preselections', function() {
       expect(boxes[1].selection_priority).toEqual(1)
     });
   });
+
+  describe('labl box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/SRMP_AC4.mp4');
+      var box = parsedFile.fetchAll('prsl').filter((b) => b.group_id === 234)[0];
+      expect(box).toBeDefined()
+      expect(box.boxes).toBeDefined()
+      var boxes = box.boxes.filter((b) => b.type === 'labl')
+      expect(boxes[0].type).toEqual('labl');
+      expect(boxes[0].is_group_label).toEqual(0);
+      expect(boxes[0].language.localeCompare('en')).toBe(0);
+      expect(boxes[0].label).toEqual('Spanish');
+      expect(boxes[1].type).toEqual('labl');
+      expect(boxes[1].is_group_label).toEqual(0);
+      expect(boxes[1].language.localeCompare('es')).toBe(0);
+      expect(boxes[1].label).toEqual('Español');
+    });
+  });
 });
 
 describe('Text samples', function() {
