@@ -37,6 +37,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 * mp4a / enca
 * mvex
 * mvhd / mfhd
+* prsl
 * sidx
 * ssix
 * stbl
