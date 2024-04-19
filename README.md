@@ -21,6 +21,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 * elst
 * free / skip
 * ftyp / styp
+* grpl
 * hdlr
 * mdat
 * mdia
