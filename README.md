@@ -27,6 +27,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 * mdhd
 * meco
 * mehd
+* meta
 * mfhd
 * mfra
 * mfro
