@@ -316,6 +316,15 @@ describe('Preselections', function() {
       expect(boxes[1].label).toEqual('Español');
     });
   });
+
+  describe('elng box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/SRMP_AC4.mp4');
+      var box = parsedFile.fetch('elng');
+      expect(box.type).toEqual('elng');
+      expect(box.extended_language.localeCompare('en')).toBe(0);
+    });
+  });
 });
 
 describe('Text samples', function() {
