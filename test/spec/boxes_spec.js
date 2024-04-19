@@ -337,6 +337,16 @@ describe('Preselections', function() {
       expect(box.audio_rendering_indication <= 4).toBe(true);
     });
   });
+
+  describe('kind box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/SRMP_AC4.mp4');
+      var box = parsedFile.fetch('kind');
+      expect(box.type).toEqual('kind');
+      expect(box.schemeURI).toEqual('urn:mpeg:dash:role:2011')
+      expect(box.value).toEqual('main')
+    });
+  });
 });
 
 describe('Text samples', function() {
