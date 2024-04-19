@@ -284,6 +284,22 @@ describe('ctts box', function() {
   });
 });
 
+describe('Preselections', function() {
+  describe('prsl box', function() {
+    it('should correctly parse the prsl box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/SRMP_AC4.mp4');
+      var boxes = parsedFile.fetchAll('prsl');
+      expect(boxes.length).toEqual(6);
+      expect(boxes[1].type).toEqual('prsl');
+      expect(boxes[1].group_id).toEqual(234);
+      expect(boxes[1].num_entities_in_group).toEqual(1);
+      expect(boxes[1].entities[0].entity_id).toEqual(1);
+      expect(boxes[1].preselection_tag).toEqual('1')
+      expect(boxes[1].selection_priority).toEqual(1)
+    });
+  });
+});
+
 describe('Text samples', function() {
   describe('vttc box', function() {
     it('should correctly parse the box from sample data', function() {
