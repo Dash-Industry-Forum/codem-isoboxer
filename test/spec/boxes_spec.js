@@ -325,6 +325,18 @@ describe('Preselections', function() {
       expect(box.extended_language.localeCompare('en')).toBe(0);
     });
   });
+
+  describe('ardi box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/SRMP_AC4.mp4');
+      var box = parsedFile.fetch('prsl');
+      expect(box).toBeDefined()
+      box = box.boxes.find((b) => b.type === 'ardi')
+      expect(box).toBeDefined()
+      expect(box.type).toEqual('ardi');
+      expect(box.audio_rendering_indication <= 4).toBe(true);
+    });
+  });
 });
 
 describe('Text samples', function() {
