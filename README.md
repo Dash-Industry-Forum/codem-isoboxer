@@ -19,6 +19,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 * dinf
 * edts
 * elst
+* elng
 * free / skip
 * ftyp / styp
 * grpl
