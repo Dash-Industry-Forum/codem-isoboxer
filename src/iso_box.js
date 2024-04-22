@@ -20,7 +20,7 @@ ISOBox.create = function(type) {
   return newBox;
 };
 
-ISOBox.prototype._boxContainers = ['dinf', 'edts', 'mdia', 'meco', 'mfra', 'minf', 'moof', 'moov', 'mvex', 'stbl', 'strk', 'traf', 'trak', 'tref', 'udta', 'vttc', 'sinf', 'schi', 'encv', 'enca'];
+ISOBox.prototype._boxContainers = ['dinf', 'edts', 'mdia', 'meco', 'mfra', 'minf', 'moof', 'moov', 'mvex', 'stbl', 'strk', 'traf', 'trak', 'tref', 'udta', 'vttc', 'sinf', 'schi', 'encv', 'enca','meta','grpl','prsl'];
 
 ISOBox.prototype._boxProcessors = {};
 
@@ -145,6 +145,8 @@ ISOBox.prototype._readField = function(type, size) {
       return this._readData(size);
     case 'utf8':
       return this._readUTF8String();
+    case 'utf8string':
+      return this._readUTF8TerminatedString();
     default:
       return -1;
   }
@@ -252,6 +254,25 @@ ISOBox.prototype._readUTF8String = function() {
     this._cursor.offset += length;
   }
  
+  return data ? ISOBoxer.Utils.dataViewToString(data) : data;
+};
+
+ISOBox.prototype._readUTF8TerminatedString = function() {
+  var length = this._raw.byteLength - (this._cursor.offset - this._offset);
+  var data = null;
+  if (length > 0) {
+    data = new DataView(this._raw.buffer, this._cursor.offset, length);
+
+    var l;
+    for (l=0; l<length; l++)
+      if (data.getUint8(l) === 0)
+        break;
+
+    // remap the Dataview with the actual length
+    data = new DataView(this._raw.buffer, this._cursor.offset, l);
+    this._cursor.offset += Math.min(l+1, length);
+  }
+
   return data ? ISOBoxer.Utils.dataViewToString(data) : data;
 };
 
