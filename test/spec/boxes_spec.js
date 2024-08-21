@@ -307,11 +307,11 @@ describe('Preselections', function() {
       expect(box.boxes).toBeDefined()
       var boxes = box.boxes.filter((b) => b.type === 'labl')
       expect(boxes[0].type).toEqual('labl');
-      expect(boxes[0].is_group_label).toEqual(0);
+      expect(boxes[0].is_group_label).toEqual(false);
       expect(boxes[0].language.localeCompare('en')).toBe(0);
       expect(boxes[0].label).toEqual('Spanish');
       expect(boxes[1].type).toEqual('labl');
-      expect(boxes[1].is_group_label).toEqual(0);
+      expect(boxes[1].is_group_label).toEqual(false);
       expect(boxes[1].language.localeCompare('es')).toBe(0);
       expect(boxes[1].label).toEqual('Español');
     });
