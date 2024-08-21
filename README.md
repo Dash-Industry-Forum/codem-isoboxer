@@ -25,6 +25,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 * ftyp / styp
 * grpl
 * hdlr
+* imda
 * kind
 * labl
 * mdat
