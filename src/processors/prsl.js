@@ -8,7 +8,7 @@ ISOBox.prototype._boxProcessors['prsl'] = function() {
   });
   if (this.flags & 0x1000) this._procField('preselection_tag', 'utf8string');
   if (this.flags & 0x2000) this._procField('selection_priority', 'uint', 8);
-  this._procField('interleaving_tag', 'utf8string');
+  if (this.flags & 0x4000) this._procField('interleaving_tag', 'utf8string');
 
   /* rest of the boxes will be read by _parseContainerBox */
 };
