@@ -284,6 +284,71 @@ describe('ctts box', function() {
   });
 });
 
+describe('Preselections', function() {
+  describe('prsl box', function() {
+    it('should correctly parse the prsl box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/SRMP_AC4.mp4');
+      var boxes = parsedFile.fetchAll('prsl');
+      expect(boxes.length).toEqual(6);
+      expect(boxes[1].type).toEqual('prsl');
+      expect(boxes[1].group_id).toEqual(234);
+      expect(boxes[1].num_entities_in_group).toEqual(1);
+      expect(boxes[1].entities[0].entity_id).toEqual(1);
+      expect(boxes[1].preselection_tag).toEqual('1')
+      expect(boxes[1].selection_priority).toEqual(1)
+    });
+  });
+
+  describe('labl box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/SRMP_AC4.mp4');
+      var box = parsedFile.fetchAll('prsl').filter((b) => b.group_id === 234)[0];
+      expect(box).toBeDefined()
+      expect(box.boxes).toBeDefined()
+      var boxes = box.boxes.filter((b) => b.type === 'labl')
+      expect(boxes[0].type).toEqual('labl');
+      expect(boxes[0].is_group_label).toEqual(false);
+      expect(boxes[0].language.localeCompare('en')).toBe(0);
+      expect(boxes[0].label).toEqual('Spanish');
+      expect(boxes[1].type).toEqual('labl');
+      expect(boxes[1].is_group_label).toEqual(false);
+      expect(boxes[1].language.localeCompare('es')).toBe(0);
+      expect(boxes[1].label).toEqual('Español');
+    });
+  });
+
+  describe('elng box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/SRMP_AC4.mp4');
+      var box = parsedFile.fetch('elng');
+      expect(box.type).toEqual('elng');
+      expect(box.extended_language.localeCompare('en')).toBe(0);
+    });
+  });
+
+  describe('ardi box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/SRMP_AC4.mp4');
+      var box = parsedFile.fetch('prsl');
+      expect(box).toBeDefined()
+      box = box.boxes.find((b) => b.type === 'ardi')
+      expect(box).toBeDefined()
+      expect(box.type).toEqual('ardi');
+      expect(box.audio_rendering_indication <= 4).toBe(true);
+    });
+  });
+
+  describe('kind box', function() {
+    it('should correctly parse the box from sample data', function() {
+      var parsedFile  = loadParsedFixture('./test/fixtures/SRMP_AC4.mp4');
+      var box = parsedFile.fetch('kind');
+      expect(box.type).toEqual('kind');
+      expect(box.schemeURI).toEqual('urn:mpeg:dash:role:2011')
+      expect(box.value).toEqual('main')
+    });
+  });
+});
+
 describe('Text samples', function() {
   describe('vttc box', function() {
     it('should correctly parse the box from sample data', function() {

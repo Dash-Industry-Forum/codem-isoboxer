@@ -16,17 +16,24 @@
 Currently a limited set of ISOBMFF boxes is supported:
 
 ### ISO/IEC 14496-12:2012 (ISOBMFF)
+* ardi
 * dinf
 * edts
 * elst
+* elng
 * free / skip
 * ftyp / styp
+* grpl
 * hdlr
+* imda
+* kind
+* labl
 * mdat
 * mdia
 * mdhd
 * meco
 * mehd
+* meta
 * mfhd
 * mfra
 * mfro
@@ -35,6 +42,7 @@ Currently a limited set of ISOBMFF boxes is supported:
 * mp4a / enca
 * mvex
 * mvhd / mfhd
+* prsl
 * sidx
 * ssix
 * stbl
